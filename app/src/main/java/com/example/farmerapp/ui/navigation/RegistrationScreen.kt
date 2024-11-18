@@ -21,7 +21,6 @@ fun RegistrationScreen(onNavigateToLogin: () -> Unit) {
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // App Logo
         Icon(
