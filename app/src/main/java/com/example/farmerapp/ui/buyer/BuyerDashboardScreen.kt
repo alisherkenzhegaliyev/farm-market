@@ -18,48 +18,59 @@ import coil.compose.rememberAsyncImagePainter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuyerInterfaceScreen() {
+    // States for filters and price slider
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("All Categories") }
     var selectedSortBy by remember { mutableStateOf("Price") }
     var sortOrder by remember { mutableStateOf("Ascending") }
+    var priceRangeStart by remember { mutableStateOf(0f) }
+    var priceRangeEnd by remember { mutableStateOf(50f) }
+
+    // Category, sort, and order options
     val categories = listOf("All Categories", "Vegetables", "Fruits", "Seeds")
     val sortOptions = listOf("Price", "Popularity", "Newest Listings")
     val orderOptions = listOf("Ascending", "Descending")
 
-    // Product data with real images
-    val products = listOf(
+    // Product data with valid image URLs
+    val allProducts = listOf(
         Product(
             name = "Fresh Apples",
-            price = "$2.99/kg",
+            price = 2.99f,
             location = "Orchard Farm",
-            imageUrl = "https://pngimg.com/uploads/apple_logo/apple_logo_PNG19666.png"
+            imageUrl = "https://pngimg.com/uploads/apple/apple_PNG12493.png" // Fixed URL
         ),
         Product(
             name = "Organic Carrots",
-            price = "$1.49/kg",
+            price = 1.49f,
             location = "Green Valley",
-            imageUrl = "https://images.unsplash.com/photo-1582515073490-399813c3a4b0"
+            imageUrl = "https://i.scdn.co/image/ab6761610000e5ebf7b952107c126c561c52171e"
         ),
         Product(
             name = "Tomato Seeds",
-            price = "$4.99/pack",
+            price = 4.99f,
             location = "Seed World",
-            imageUrl = "https://images.unsplash.com/photo-1598032896924-8d8d5c1d1a3b"
+            imageUrl = "https://images.unsplash.com/photo-1598032896924-8d8d5c1d1a3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
         ),
         Product(
             name = "Bananas",
-            price = "$1.99/kg",
+            price = 1.99f,
             location = "Tropical Farms",
-            imageUrl = "https://unsplash.com/photos/three-ripe-bananas-on-a-yellow-background-gcJQzVTpcoY"
+            imageUrl = "https://images.unsplash.com/photo-1574226516831-e1dff420e8f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
         ),
         Product(
             name = "Pumpkins",
-            price = "$5.00/each",
+            price = 5.00f,
             location = "Harvest Heaven",
-            imageUrl = "https://images.unsplash.com/photo-1506806732259-39c2d0268443"
+            imageUrl = "https://images.unsplash.com/photo-1506806732259-39c2d0268443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
         )
     )
 
+    // Filtered Products Based on Price Range
+    val filteredProducts = allProducts.filter {
+        it.price in priceRangeStart..priceRangeEnd
+    }
+
+    // Main UI Column
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +87,7 @@ fun BuyerInterfaceScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Filters: Category Dropdown
+        // Category Dropdown
         DropdownMenuButton(
             label = "Category",
             options = categories,
@@ -86,7 +97,26 @@ fun BuyerInterfaceScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Filters: Sort By Dropdown
+        // Price Range Slider
+        Text(
+            text = "Filter by Price: \$${priceRangeStart.toInt()} - \$${priceRangeEnd.toInt()}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        RangeSlider(
+                value = priceRangeStart..priceRangeEnd, // Use ClosedFloatingPointRange for older versions
+        onValueChange = { range ->
+            priceRangeStart = range.start
+            priceRangeEnd = range.endInclusive
+        },
+        valueRange = 0f..50f, // Define your slider range
+        modifier = Modifier.fillMaxWidth()
+        )
+
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Sort By Dropdown
         DropdownMenuButton(
             label = "Sort By",
             options = sortOptions,
@@ -96,7 +126,7 @@ fun BuyerInterfaceScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Filters: Order Dropdown
+        // Order Dropdown
         DropdownMenuButton(
             label = "Order",
             options = orderOptions,
@@ -108,7 +138,7 @@ fun BuyerInterfaceScreen() {
 
         // Product List
         LazyColumn {
-            items(products) { product ->
+            items(filteredProducts) { product ->
                 ProductCard(product = product)
             }
         }
@@ -153,7 +183,7 @@ fun ProductCard(product: Product) {
                     )
                 )
                 Text(
-                    text = product.price,
+                    text = "\$${product.price}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.Green)
                 )
                 Text(
@@ -178,42 +208,26 @@ fun DropdownMenuButton(
         Button(onClick = { expanded = true }) {
             Text("$label: $selectedOption")
         }
-        @Composable
-        fun DropdownMenuButton(
-            label: String,
-            options: List<String>,
-            selectedOption: String,
-            onOptionSelected: (String) -> Unit
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
         ) {
-            var expanded by remember { mutableStateOf(false) }
-
-            Box {
-                Button(onClick = { expanded = true }) {
-                    Text("$label: $selectedOption")
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    options.forEach { option ->
-                        DropdownMenuItem(
-                            onClick = {
-                                onOptionSelected(option)
-                                expanded = false
-                            },
-                            text = { Text(option) } // Pass Text composable as the text parameter
-                        )
-                    }
-                }
+            options.forEach { option ->
+                DropdownMenuItem(
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    },
+                    text = { Text(option) }
+                )
             }
         }
-
     }
 }
 
 data class Product(
     val name: String,
-    val price: String,
+    val price: Float,
     val location: String,
     val imageUrl: String
 )
