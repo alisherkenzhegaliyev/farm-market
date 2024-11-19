@@ -42,6 +42,8 @@ fun BuyerInterfaceScreen() {
     val categories = listOf("Vegetables", "Fruits", "Seeds")
     val locations = listOf("All Locations", "Orchard Farm", "Green Valley", "Seed World", "Tropical Farms", "Harvest Heaven")
 
+
+    val orderOptions = listOf("Low to High", "High to Low")
     // Product data
     val allProducts = listOf(
         Product(
@@ -50,7 +52,7 @@ fun BuyerInterfaceScreen() {
             category = "Fruits",
             location = "Orchard Farm",
             quantity = 25,
-            imageUrl = "https://pngimg.com/uploads/apple/apple_PNG12493.png",
+            imageUrl = "https://images.unsplash.com/photo-1512578659172-63a4634c05ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             createdAt = System.currentTimeMillis() // Mark as newly added
         ),
         Product(
@@ -59,7 +61,7 @@ fun BuyerInterfaceScreen() {
             category = "Vegetables",
             location = "Green Valley",
             quantity = 40,
-            imageUrl = "https://i.scdn.co/image/ab6761610000e5ebf7b952107c126c561c52171e",
+            imageUrl = "https://images.unsplash.com/photo-1447175008436-054170c2e979?q=80&w=1899&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             createdAt = System.currentTimeMillis() - (8 * 24 * 60 * 60 * 1000) // Added 8 days ago
         ),
         Product(
@@ -68,7 +70,7 @@ fun BuyerInterfaceScreen() {
             category = "Seeds",
             location = "Seed World",
             quantity = 15,
-            imageUrl = "https://images.unsplash.com/photo-1598032896924-8d8d5c1d1a3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+            imageUrl = "https://images.unsplash.com/photo-1631262909868-d6f6ed8fbe7c?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             createdAt = System.currentTimeMillis() - (1 * 24 * 60 * 60 * 1000) // Added 1 day ago
         )
     )
@@ -97,6 +99,7 @@ fun BuyerInterfaceScreen() {
             .padding(16.dp)
             .background(LightGreen) // Background color for the app
     ) {
+
         // Search Bar
         TextField(
             value = searchQuery,
@@ -117,6 +120,7 @@ fun BuyerInterfaceScreen() {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+//        Spacer(modifier = Modifier.height(8.dp))
 
         // Collapsible Location Filter
         LocationFilterDropdown(
@@ -124,8 +128,23 @@ fun BuyerInterfaceScreen() {
             selectedLocation = selectedLocation,
             onLocationSelectionChange = { selectedLocation = it }
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        PriceRangeSlider(
+            priceRangeStart = priceRangeStart,
+            priceRangeEnd = priceRangeEnd,
+            onPriceRangeChange = { start, end ->
+                priceRangeStart = start
+                priceRangeEnd = end
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        SortOrderDropdown(
+            sortOrder = sortOrder,
+            onSortOrderChange = { sortOrder = it }
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        
 
         // Product List
         LazyColumn {
@@ -133,6 +152,7 @@ fun BuyerInterfaceScreen() {
                 ProductCard(product = product)
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -204,6 +224,63 @@ fun ProductCard(product: Product) {
                 )
             }
         }
+    }
+}
+@Composable
+fun SortOrderDropdown(
+    sortOrder: String,
+    onSortOrderChange: (String) -> Unit
+) {
+    val sortOptions = listOf("Newest Listings", "Low to High", "High to Low")
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        Button(onClick = { expanded = true }) {
+            Text("Sort By: $sortOrder")
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(Icons.Default.ArrowDropDown, contentDescription = "Sort Options")
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            sortOptions.forEach { option ->
+                DropdownMenuItem(
+                    onClick = {
+                        onSortOrderChange(option)
+                        expanded = false
+                    },
+                    text = { Text(option) }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PriceRangeSlider(
+    priceRangeStart: Float,
+    priceRangeEnd: Float,
+    onPriceRangeChange: (Float, Float) -> Unit
+) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text(
+            text = "Price Range: \$${priceRangeStart.toInt()} - \$${priceRangeEnd.toInt()}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        RangeSlider(
+            value = priceRangeStart..priceRangeEnd,
+            onValueChange = { range ->
+                onPriceRangeChange(range.start, range.endInclusive)
+            },
+            valueRange = 0f..50f,
+            modifier = Modifier.fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                thumbColor = GrassGreen,
+                activeTrackColor = DarkGreen
+            )
+        )
     }
 }
 

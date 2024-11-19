@@ -24,7 +24,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BuyerInterfaceScreen()
+            FarmerAppTheme { // Use the app theme for consistent styling
+                AppNavigation() // Navigate through the app's routes
+            }
         }
     }
 }
+
