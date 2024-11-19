@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
-    onNavigateToFarmerDashboard: () -> Unit
+    onNavigateToFarmerDashboard: () -> Unit,
+    onNavigateToBuyerDashboard: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +57,7 @@ fun LoginScreen(
 
         // Login Button
         Button(
-            onClick = onNavigateToFarmerDashboard, // Use the navigation callback here
+            onClick = onNavigateToBuyerDashboard, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")

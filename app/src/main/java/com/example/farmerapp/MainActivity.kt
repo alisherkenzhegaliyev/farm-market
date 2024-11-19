@@ -17,13 +17,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.farmerapp.ui.navigation.AppNavigation
 import com.example.farmerapp.ui.theme.FarmerAppTheme // Import the theme
 
+
+import com.example.farmerapp.ui.screens.BuyerInterfaceScreen
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            FarmerAppTheme { // Apply the theme
-                AppNavigation() // Call your navigation composable here
-            }
+            BuyerInterfaceScreen()
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
 import com.example.farmerapp.ui.farmer.ManageProductsScreen
+import com.example.farmerapp.ui.screens.BuyerInterfaceScreen
 import com.example.farmerapp.ui.screens.LoginScreen
 import com.example.farmerapp.ui.screens.RegistrationScreen
 
@@ -17,15 +18,14 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "login") {
         // Login Screen
-        composable("login") {
+        composable(route = "login") {
             LoginScreen(
                 onNavigateToRegister = { navController.navigate("register") },
-                onNavigateToFarmerDashboard = { navController.navigate("farmer_dashboard") }
+                onNavigateToFarmerDashboard = { navController.navigate("farmer_dashboard") },
+                onNavigateToBuyerDashboard = { navController.navigate("buyer_interface") } // Include buyer dashboard
             )
         }
-
-
-        // Registration Screen
+    // Registration Screen
         composable("register") {
             RegistrationScreen(onNavigateToLogin = { navController.navigate("login") })
         }
@@ -50,5 +50,11 @@ fun AppNavigation() {
         composable("manage_products") {
             ManageProductsScreen(onBack = { navController.popBackStack() })
         }
+
+        // Add Buyer Interface Screen
+        composable("buyer_interface") {
+            BuyerInterfaceScreen()
+        }
+
     }
 }
