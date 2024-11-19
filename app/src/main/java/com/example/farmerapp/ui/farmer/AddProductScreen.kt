@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -80,4 +81,10 @@ fun AddProductContent(modifier: Modifier = Modifier) {
             Text("Save Product")
         }
     }
+}
+
+@Preview
+@Composable
+fun AddProductScreenPreview() {
+    AddProductScreen(onBack = {})
 }
