@@ -1,14 +1,9 @@
 package com.example.farmerapp.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +11,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(onNavigateToRegister: () -> Unit) {
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit,
+    onNavigateToFarmerDashboard: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,7 +56,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
 
         // Login Button
         Button(
-            onClick = { /* Handle Login Logic */ },
+            onClick = onNavigateToFarmerDashboard, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
