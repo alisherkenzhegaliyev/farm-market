@@ -8,5 +8,6 @@ data class Product(
     val farm: String,
     val description: String,
     val category: String,
-    val rating: Int
+    val rating: Int,
+    val createdAt: Long
 )
