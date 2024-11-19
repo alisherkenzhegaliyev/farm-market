@@ -1,4 +1,4 @@
-package com.example.farmerapp.data
+package com.example.farmerapp.model
 
 data class Product(
     val id: String,
