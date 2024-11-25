@@ -7,13 +7,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
     viewModel: RegistrationViewModel = viewModel(),
-    userType: String, // "Farmer" or "Buyer"
     onNavigateToLogin: () -> Unit
 ) {
+    // State to track user type (Farmer or Buyer)
+    var userType by remember { mutableStateOf("Farmer") }
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -22,6 +24,28 @@ fun RegistrationScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
     ) {
+        // User Type Switch Button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TextButton(
+                onClick = { userType = "Farmer" },
+                enabled = userType != "Farmer"
+            ) {
+                Text("Farmer Registration")
+            }
+
+            TextButton(
+                onClick = { userType = "Buyer" },
+                enabled = userType != "Buyer"
+            ) {
+                Text("Buyer Registration")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "Register as $userType",
             style = MaterialTheme.typography.headlineMedium
@@ -29,6 +53,7 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Shared Input Fields
         TextField(
             value = uiState.name,
             onValueChange = viewModel::updateName,
@@ -55,6 +80,7 @@ fun RegistrationScreen(
         )
 
         if (userType == "Farmer") {
+            // Farmer-Specific Input Fields
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
@@ -93,6 +119,7 @@ fun RegistrationScreen(
         }
 
         if (userType == "Buyer") {
+            // Buyer-Specific Input Fields
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
@@ -114,6 +141,7 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Register Button
         Button(
             onClick = {
                 if (userType == "Farmer") viewModel.registerFarmer() else viewModel.registerBuyer()
@@ -125,6 +153,7 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Display Error or Success Message
         if (uiState.errorMessage.isNotBlank()) {
             Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error)
         }
@@ -135,6 +164,7 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Back to Login Button
         TextButton(onClick = onNavigateToLogin) {
             Text("Back to Login")
         }
@@ -147,6 +177,5 @@ fun RegistrationScreen(
 fun RegistrationScreenPreview(){
     RegistrationScreen(
         onNavigateToLogin = {},
-        userType = "Buyer",
     )
 }
