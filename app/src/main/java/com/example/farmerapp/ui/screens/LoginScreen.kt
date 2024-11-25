@@ -65,7 +65,7 @@ fun LoginScreen(
                     Icons.Filled.VisibilityOff
                 }
 
-                IconButton(onClick = { viewModel.updateVisiblity() }) {
+                IconButton(onClick = { viewModel.updateVisibility() }) {
                     Icon(imageVector = image, contentDescription = null)
                 }
 
