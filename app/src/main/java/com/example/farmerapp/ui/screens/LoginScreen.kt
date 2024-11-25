@@ -3,20 +3,29 @@ package com.example.farmerapp.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToFarmerDashboard: () -> Unit,
-    onNavigateToBuyerDashboard: () -> Unit
+    onNavigateToBuyerDashboard: () -> Unit,
+    viewModel: LoginViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
 ) {
+
+    val uiState = viewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,10 +43,9 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Email Input Field
-        var email by remember { mutableStateOf("") }
         TextField(
-            value = email,
-            onValueChange = { email = it },
+            value = uiState.value.emailEntry,
+            onValueChange = { viewModel.updateEmailField(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -45,13 +53,25 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Password Input Field
-        var password by remember { mutableStateOf("") }
         TextField(
-            value = password,
-            onValueChange = { password = it },
+            value = uiState.value.passwordEntry,
+            onValueChange = { viewModel.updatePasswordField(it) },
             label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            visualTransformation = if(uiState.value.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (uiState.value.passwordVisible) {
+                    Icons.Filled.Visibility
+                } else {
+                    Icons.Filled.VisibilityOff
+                }
+
+                IconButton(onClick = { viewModel.updateVisiblity() }) {
+                    Icon(imageVector = image, contentDescription = null)
+                }
+
+            },
+            modifier = Modifier.fillMaxWidth(),
+
         )
 
         Spacer(modifier = Modifier.height(16.dp))

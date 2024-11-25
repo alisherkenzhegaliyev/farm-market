@@ -17,11 +17,22 @@ class LoginViewModel(
         uiState.value = uiState.value.copy(emailEntry = entry)
     }
 
+    fun updatePasswordField(entry: String) {
+        uiState.value = uiState.value.copy(passwordEntry = entry)
+    }
+
+    fun updateVisiblity() {
+        val pswVisiblity = uiState.value.passwordVisible
+        uiState.value = uiState.value.copy(passwordVisible = !pswVisiblity)
+    }
+
+
 
 
 }
 
 data class LoginUiState(
     val emailEntry: String = "",
-    val passwordEntry: String = ""
+    val passwordEntry: String = "",
+    val passwordVisible: Boolean = false
 )
