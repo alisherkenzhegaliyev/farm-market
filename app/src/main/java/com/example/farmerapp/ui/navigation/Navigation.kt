@@ -28,9 +28,9 @@ fun AppNavigation() {
             )
         }
     // Registration Screen
-        composable("register") {
-            RegistrationScreen(onNavigateToLogin = { navController.navigate("login") })
-        }
+//        composable("register") {
+//            RegistrationScreen(onNavigateToLogin = { navController.navigate("registerz") })
+//        }
 
         // Farmer Dashboard Screen
         // Farmer Dashboard Screen
