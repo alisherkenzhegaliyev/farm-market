@@ -9,12 +9,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageProductsScreen(onBack: () -> Unit) {
+fun ManageProductsScreen(
+    onBack: () -> Unit,
+    onEditScreen: (Int) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,4 +60,10 @@ fun ManageProductsContent(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ManageProductsScreenPreview() {
+    ManageProductsScreen(onBack = {})
 }

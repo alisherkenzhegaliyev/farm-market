@@ -2,9 +2,11 @@ package com.example.farmerapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
 import com.example.farmerapp.ui.farmer.ManageProductsScreen
@@ -48,12 +50,24 @@ fun AppNavigation() {
 
         // Manage Products Screen
         composable("manage_products") {
-            ManageProductsScreen(onBack = { navController.popBackStack() })
+            ManageProductsScreen(
+                onBack = { navController.popBackStack() },
+                onEditScreen = { id ->
+                    navController.navigate(route = "edit?id=$id")
+                }
+            )
         }
 
         // Add Buyer Interface Screen
         composable("buyer_interface") {
             BuyerInterfaceScreen()
+        }
+
+        composable(
+            route = "edit?id={id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) {
+
         }
 
     }
