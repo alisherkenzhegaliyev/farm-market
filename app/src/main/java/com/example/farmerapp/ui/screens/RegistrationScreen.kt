@@ -1,85 +1,123 @@
 package com.example.farmerapp.ui.screens
-
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationScreen(onNavigateToLogin: () -> Unit) {
+fun RegistrationScreen(
+    viewModel: RegistrationViewModel = viewModel(),
+    userType: String, // "Farmer" or "Buyer"
+    onNavigateToLogin: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        // App Logo
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = "App Logo",
-            modifier = Modifier.size(80.dp)
+        Text(
+            text = "Register as $userType",
+            style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Name Input Field
-        var name by remember { mutableStateOf("") }
         TextField(
-            value = name,
-            onValueChange = { name = it },
+            value = uiState.name,
+            onValueChange = viewModel::updateName,
             label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Email Input Field
-        var email by remember { mutableStateOf("") }
         TextField(
-            value = email,
-            onValueChange = { email = it },
+            value = uiState.email,
+            onValueChange = viewModel::updateEmail,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Password Input Field
-        var password by remember { mutableStateOf("") }
         TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
+            value = uiState.phoneNumber,
+            onValueChange = viewModel::updatePhoneNumber,
+            label = { Text("Phone Number") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (userType == "Farmer") {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Confirm Password Input Field
-        var confirmPassword by remember { mutableStateOf("") }
-        TextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
+            TextField(
+                value = uiState.farmAddress,
+                onValueChange = viewModel::updateFarmAddress,
+                label = { Text("Farm Address") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = uiState.farmSize,
+                onValueChange = viewModel::updateFarmSize,
+                label = { Text("Farm Size") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = uiState.cropTypes,
+                onValueChange = viewModel::updateCropTypes,
+                label = { Text("Types of Crops") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = uiState.govtId,
+                onValueChange = viewModel::updateGovtId,
+                label = { Text("Government-issued ID") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        if (userType == "Buyer") {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = uiState.deliveryAddress,
+                onValueChange = viewModel::updateDeliveryAddress,
+                label = { Text("Delivery Address") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = uiState.paymentMethod,
+                onValueChange = viewModel::updatePaymentMethod,
+                label = { Text("Preferred Payment Method") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Register Button
         Button(
-            onClick = { /* Handle Registration Logic */ },
+            onClick = {
+                if (userType == "Farmer") viewModel.registerFarmer() else viewModel.registerBuyer()
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Register")
@@ -87,9 +125,28 @@ fun RegistrationScreen(onNavigateToLogin: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Back to Login Navigation
+        if (uiState.errorMessage.isNotBlank()) {
+            Text(uiState.errorMessage, color = MaterialTheme.colorScheme.error)
+        }
+
+        if (uiState.registrationStatus.isNotBlank()) {
+            Text(uiState.registrationStatus, color = MaterialTheme.colorScheme.primary)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextButton(onClick = onNavigateToLogin) {
             Text("Back to Login")
         }
     }
+}
+
+
+@Preview
+@Composable
+fun RegistrationScreenPreview(){
+    RegistrationScreen(
+        onNavigateToLogin = {},
+        userType = "Buyer",
+    )
 }
