@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -78,4 +79,14 @@ fun LoginScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(
+        onNavigateToRegister = {},
+        onNavigateToBuyerDashboard = {},
+        onNavigateToFarmerDashboard = {}
+    )
 }

@@ -65,5 +65,5 @@ fun ManageProductsContent(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun ManageProductsScreenPreview() {
-    ManageProductsScreen(onBack = {})
+    ManageProductsScreen(onBack = {}, onEditScreen = {})
 }
