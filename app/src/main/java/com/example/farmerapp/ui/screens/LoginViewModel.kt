@@ -21,9 +21,9 @@ class LoginViewModel(
         uiState.value = uiState.value.copy(passwordEntry = entry)
     }
 
-    fun updateVisiblity() {
-        val pswVisiblity = uiState.value.passwordVisible
-        uiState.value = uiState.value.copy(passwordVisible = !pswVisiblity)
+    fun updateVisibility() {
+        val pswVisibility = uiState.value.passwordVisible
+        uiState.value = uiState.value.copy(passwordVisible = !pswVisibility)
     }
 
 
