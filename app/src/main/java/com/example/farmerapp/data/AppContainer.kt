@@ -14,7 +14,7 @@ interface AppContainer {
 
 
 class DefaultAppContainer : AppContainer {
-    private val baseUrl = "https://android-kotlin-fun-mars-server.appspot.com"
+    private val baseUrl = "http://10.101.29.34:8000/"
     val retrofit: Retrofit =
         Retrofit.Builder()
             .baseUrl(baseUrl)

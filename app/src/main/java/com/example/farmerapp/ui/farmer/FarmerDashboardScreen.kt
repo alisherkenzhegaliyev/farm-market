@@ -16,15 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 
 @Composable
 fun FarmerDashboardScreen(
     onAddProduct: () -> Unit,
     onManageProducts: () -> Unit,
-    onLowStockNotifications: () -> Unit,
-    viewModel: FarmerDashboardViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+
 
     Scaffold(
         topBar = { FarmerTopBar() },
@@ -33,8 +32,6 @@ fun FarmerDashboardScreen(
                 modifier = Modifier.padding(padding),
                 onAddProduct = onAddProduct,
                 onManageProducts = onManageProducts,
-                onLowStockNotifications = onLowStockNotifications,
-                uiState = uiState
             )
         }
     )
@@ -62,8 +59,6 @@ fun FarmerDashboardContent(
     modifier: Modifier = Modifier,
     onAddProduct: () -> Unit,
     onManageProducts: () -> Unit,
-    onLowStockNotifications: () -> Unit,
-    uiState: FarmerDashboardUiState
 ) {
     Box(
         modifier = modifier
@@ -76,14 +71,6 @@ fun FarmerDashboardContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Show error message if any
-            if (uiState.errorMessage.isNotEmpty()) {
-                Text(
-                    text = uiState.errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
 
             // Dashboard Cards
             DashboardCard(
@@ -98,13 +85,6 @@ fun FarmerDashboardContent(
                 icon = Icons.Default.Edit,
                 backgroundColor = Color(0xFF4CAF50),
                 onClick = onManageProducts
-            )
-
-            DashboardCard(
-                text = "Low-Stock Notifications",
-                icon = Icons.Default.Warning,
-                backgroundColor = Color(0xFFF44336),
-                onClick = onLowStockNotifications
             )
         }
     }

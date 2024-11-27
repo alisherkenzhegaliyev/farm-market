@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.farmerapp.data.FarmerMarketRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,9 @@ data class AddProductUiState(
     val isSaved: Boolean = false
 )
 
-class AddProductViewModel : ViewModel() {
+class AddProductViewModel(
+    private val farmerMarketRepository: FarmerMarketRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddProductUiState())
     val uiState = _uiState

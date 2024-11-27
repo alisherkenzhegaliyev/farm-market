@@ -37,7 +37,6 @@ fun AppNavigation() {
             FarmerDashboardScreen(
                 onAddProduct = { navController.navigate(route = "add_product") },
                 onManageProducts = { navController.navigate(route = "manage_products") },
-                onLowStockNotifications = { /* Placeholder: Implement navigation or logic here */ }
             )
         }
 
