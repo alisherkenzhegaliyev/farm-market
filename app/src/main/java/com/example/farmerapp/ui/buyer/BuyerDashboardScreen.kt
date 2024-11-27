@@ -1,4 +1,4 @@
-package com.example.farmerapp.ui.screens
+package com.example.farmerapp.ui.buyer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

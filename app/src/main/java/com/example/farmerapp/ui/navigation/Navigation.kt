@@ -6,11 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.farmerapp.ui.buyer.BuyerInterfaceScreen
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
 import com.example.farmerapp.ui.farmer.ManageProductsScreen
 import com.example.farmerapp.ui.farmer.EditProductScreen
-import com.example.farmerapp.ui.screens.BuyerInterfaceScreen
 import com.example.farmerapp.ui.screens.LoginScreen
 import com.example.farmerapp.ui.screens.RegistrationScreen
 
