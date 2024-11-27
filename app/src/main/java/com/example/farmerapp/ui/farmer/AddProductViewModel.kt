@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 data class Product(
@@ -14,58 +15,54 @@ data class Product(
     val description: String
 )
 
+data class AddProductUiState(
+    val name: String = "",
+    val category: String = "",
+    val price: String = "",
+    val quantity: String = "",
+    val description: String = "",
+    val isSaved: Boolean = false
+)
+
 class AddProductViewModel : ViewModel() {
 
-    // Mutable state for product fields
-    var name = mutableStateOf("")
-        private set
-    var category = mutableStateOf("")
-        private set
-    var price = mutableStateOf("")
-        private set
-    var quantity = mutableStateOf("")
-        private set
-    var description = mutableStateOf("")
-        private set
-
-    // Event to handle the Save button click
-    var isSaved = mutableStateOf(false)
-        private set
+    private val _uiState = MutableStateFlow(AddProductUiState())
+    val uiState = _uiState
 
     // Update methods for each field
     fun updateName(newName: String) {
-        name.value = newName
+        _uiState.value = _uiState.value.copy(name = newName)
     }
 
     fun updateCategory(newCategory: String) {
-        category.value = newCategory
+        _uiState.value = _uiState.value.copy(category = newCategory)
     }
 
     fun updatePrice(newPrice: String) {
-        price.value = newPrice
+        _uiState.value = _uiState.value.copy(price = newPrice)
     }
 
     fun updateQuantity(newQuantity: String) {
-        quantity.value = newQuantity
+        _uiState.value = _uiState.value.copy(quantity = newQuantity)
     }
 
     fun updateDescription(newDescription: String) {
-        description.value = newDescription
+        _uiState.value = _uiState.value.copy(description = newDescription)
     }
 
     // Save Product Logic
-    fun saveProduct() {
-        viewModelScope.launch {
-            val product = Product(
-                name = name.value,
-                category = category.value,
-                price = price.value.toDoubleOrNull() ?: 0.0,
-                quantity = quantity.value.toIntOrNull() ?: 0,
-                description = description.value
-            )
-            // Logic to save the product (e.g., database, network call)
-            println("Product saved: $product")
-            isSaved.value = true
-        }
-    }
+//    fun saveProduct() {
+//        viewModelScope.launch {
+//            val product = Product(
+//                name = name.value,
+//                category = category.value,
+//                price = price.value.toDoubleOrNull() ?: 0.0,
+//                quantity = quantity.value.toIntOrNull() ?: 0,
+//                description = description.value
+//            )
+//            // Logic to save the product (e.g., database, network call)
+//            println("Product saved: $product")
+//            isSaved.value = true
+//        }
+//    }
 }
