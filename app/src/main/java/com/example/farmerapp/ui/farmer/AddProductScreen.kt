@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProductScreen(onBack: () -> Unit) {
+fun AddProductScreen(onBack: () -> Unit, viewModel: AddProductViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -25,19 +25,16 @@ fun AddProductScreen(onBack: () -> Unit) {
             )
         },
         content = { padding ->
-            AddProductContent(modifier = Modifier.padding(padding))
+            AddProductContent(
+                modifier = Modifier.padding(padding),
+                viewModel = viewModel
+            )
         }
     )
 }
 
 @Composable
-fun AddProductContent(modifier: Modifier = Modifier) {
-    var name by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var quantity by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-
+fun AddProductContent(modifier: Modifier = Modifier, viewModel: AddProductViewModel) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -45,46 +42,43 @@ fun AddProductContent(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         TextField(
-            value = name,
-            onValueChange = { name = it },
+            value = viewModel.name.value,
+            onValueChange = viewModel::updateName,
             label = { Text("Product Name") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = category,
-            onValueChange = { category = it },
+            value = viewModel.category.value,
+            onValueChange = viewModel::updateCategory,
             label = { Text("Category") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = price,
-            onValueChange = { price = it },
+            value = viewModel.price.value,
+            onValueChange = viewModel::updatePrice,
             label = { Text("Price") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = quantity,
-            onValueChange = { quantity = it },
+            value = viewModel.quantity.value,
+            onValueChange = viewModel::updateQuantity,
             label = { Text("Quantity") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = description,
-            onValueChange = { description = it },
+            value = viewModel.description.value,
+            onValueChange = viewModel::updateDescription,
             label = { Text("Description") },
             modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = { /* Save Product Logic */ },
+            onClick = { viewModel.saveProduct() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save Product")
         }
+        if (viewModel.isSaved.value) {
+            Text("Product saved successfully!", color = MaterialTheme.colorScheme.primary)
+        }
     }
-}
-
-@Preview
-@Composable
-fun AddProductScreenPreview() {
-    AddProductScreen(onBack = {})
 }
