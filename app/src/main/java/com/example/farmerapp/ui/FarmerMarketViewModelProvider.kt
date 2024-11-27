@@ -7,8 +7,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.farmerapp.FarmerMarketApplication
 import com.example.farmerapp.ui.farmer.EditScreenViewModel
+import com.example.farmerapp.ui.farmer.FarmerDashboardViewModel
 import com.example.farmerapp.ui.screens.LoginViewModel
 import com.example.farmerapp.ui.screens.RegistrationViewModel
+
 
 object FarmerMarketViewModelProvider {
     val Factory = viewModelFactory {
@@ -27,6 +29,12 @@ object FarmerMarketViewModelProvider {
         initializer {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
+                farmerMarketApplicatoin().container.farmerMarketRepository
+            )
+        }
+
+        initializer {
+            FarmerDashboardViewModel(
                 farmerMarketApplicatoin().container.farmerMarketRepository
             )
         }
