@@ -78,7 +78,7 @@ fun LoginScreen(
 
         // Login Button
         Button(
-            onClick = onNavigateToBuyerDashboard, // Use the navigation callback here
+            onClick = onNavigateToFarmerDashboard, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")

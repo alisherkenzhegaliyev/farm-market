@@ -1,7 +1,6 @@
 package com.example.farmerapp.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,6 +9,7 @@ import androidx.navigation.navArgument
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
 import com.example.farmerapp.ui.farmer.ManageProductsScreen
+import com.example.farmerapp.ui.farmer.EditProductScreen
 import com.example.farmerapp.ui.screens.BuyerInterfaceScreen
 import com.example.farmerapp.ui.screens.LoginScreen
 import com.example.farmerapp.ui.screens.RegistrationScreen
@@ -18,7 +18,7 @@ import com.example.farmerapp.ui.screens.RegistrationScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "register") {
+    NavHost(navController = navController, startDestination = "buyer_interface") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
@@ -27,12 +27,11 @@ fun AppNavigation() {
                 onNavigateToBuyerDashboard = { navController.navigate("buyer_interface") } // Include buyer dashboard
             )
         }
-    // Registration Screen
-//        composable("register") {
-//            RegistrationScreen(onNavigateToLogin = { navController.navigate("registerz") })
-//        }
+        // Registration Screen
+        composable("register") {
+            RegistrationScreen(onNavigateToLogin = { navController.popBackStack() })
+        }
 
-        // Farmer Dashboard Screen
         // Farmer Dashboard Screen
         composable(route = "farmer_dashboard") {
             FarmerDashboardScreen(
@@ -67,7 +66,7 @@ fun AppNavigation() {
             route = "edit?id={id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
-
+            EditProductScreen(onBack = { navController.popBackStack() })
         }
 
     }

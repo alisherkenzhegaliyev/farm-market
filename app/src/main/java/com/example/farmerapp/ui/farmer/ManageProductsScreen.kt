@@ -31,13 +31,19 @@ fun ManageProductsScreen(
             )
         },
         content = { padding ->
-            ManageProductsContent(modifier = Modifier.padding(padding))
+            ManageProductsContent(
+                modifier = Modifier.padding(padding),
+                onEditScreen = onEditScreen
+            )
         }
     )
 }
 
 @Composable
-fun ManageProductsContent(modifier: Modifier = Modifier) {
+fun ManageProductsContent(
+    modifier: Modifier = Modifier,
+    onEditScreen: (Int) -> Unit
+) {
     // Dummy Product List (Replace with dynamic data)
     val products = listOf("Tomatoes", "Apples", "Carrots")
     LazyColumn(
@@ -55,7 +61,7 @@ fun ManageProductsContent(modifier: Modifier = Modifier) {
                 Text(products[index], fontSize = 16.sp)
                 ClickableText(
                     text = AnnotatedString("Edit"),
-                    onClick = { /* Navigate to Edit Screen */ }
+                    onClick = { onEditScreen(5) }
                 )
             }
         }

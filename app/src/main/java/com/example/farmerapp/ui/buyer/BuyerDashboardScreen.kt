@@ -144,7 +144,7 @@ fun BuyerInterfaceScreen() {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-        
+
 
         // Product List
         LazyColumn {

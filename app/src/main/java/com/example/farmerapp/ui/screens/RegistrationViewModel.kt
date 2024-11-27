@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.screens
 import androidx.lifecycle.ViewModel
+import com.example.farmerapp.data.FarmerMarketRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -18,10 +19,14 @@ data class RegistrationUiState(
     val paymentMethod: String = "",
     // Status
     val errorMessage: String = "",
-    val registrationStatus: String = ""
+    val registrationStatus: String = "",
+    val userType: String = "Buyer",
+    val emailValidity: Boolean = false
 )
 
-class RegistrationViewModel : ViewModel() {
+class RegistrationViewModel(
+    private val farmerMarketRepository: FarmerMarketRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState
@@ -34,8 +39,16 @@ class RegistrationViewModel : ViewModel() {
     fun updateEmail(email: String) {
         _uiState.update {
             val isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            it.copy(email = email, errorMessage = if (isValid) "" else "Invalid email format")
+            it.copy(email = email, errorMessage = if (isValid) "" else "Invalid email format", emailValidity = isValid)
         }
+    }
+
+    fun switchToFarmerReg() {
+        _uiState.update { it.copy(userType = "Farmer") }
+    }
+
+    fun switchToBuyerReg() {
+        _uiState.update { it.copy(userType = "Buyer") }
     }
 
     fun updatePhoneNumber(phoneNumber: String) {
@@ -72,22 +85,22 @@ class RegistrationViewModel : ViewModel() {
     fun registerFarmer() {
         val currentState = _uiState.value
         if (currentState.name.isBlank() || currentState.email.isBlank() || currentState.phoneNumber.isBlank() ||
-            currentState.farmAddress.isBlank() || currentState.farmSize.isBlank() || currentState.cropTypes.isBlank() || currentState.govtId.isBlank()
+                currentState.farmAddress.isBlank() || currentState.farmSize.isBlank() || currentState.cropTypes.isBlank() || currentState.govtId.isBlank() || !currentState.emailValidity
         ) {
-            _uiState.update { it.copy(errorMessage = "All fields are required for farmer registration.") }
+            _uiState.update { it.copy(errorMessage = "Some Fields are empty or Email is invalid", registrationStatus = "") }
         } else {
-            _uiState.update { it.copy(registrationStatus = "Farmer registration successful. Verification email/SMS sent.") }
+            _uiState.update { it.copy(registrationStatus = "Farmer registration successful. Verification email/SMS sent.", errorMessage = "") }
         }
     }
 
     fun registerBuyer() {
         val currentState = _uiState.value
         if (currentState.name.isBlank() || currentState.email.isBlank() || currentState.phoneNumber.isBlank() ||
-            currentState.deliveryAddress.isBlank() || currentState.paymentMethod.isBlank()
+            currentState.deliveryAddress.isBlank() || currentState.paymentMethod.isBlank() || !currentState.emailValidity
         ) {
-            _uiState.update { it.copy(errorMessage = "All fields are required for buyer registration.") }
+            _uiState.update { it.copy(errorMessage = "Some Fields are empty or Email is invalid", registrationStatus = "") }
         } else {
-            _uiState.update { it.copy(registrationStatus = "Buyer registration successful. Verification email/SMS sent.") }
+            _uiState.update { it.copy(registrationStatus = "Buyer registration successful. Verification email/SMS sent.", errorMessage = "") }
         }
     }
 }

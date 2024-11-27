@@ -25,10 +25,6 @@ class LoginViewModel(
         val pswVisibility = uiState.value.passwordVisible
         uiState.value = uiState.value.copy(passwordVisible = !pswVisibility)
     }
-
-
-
-
 }
 
 data class LoginUiState(
