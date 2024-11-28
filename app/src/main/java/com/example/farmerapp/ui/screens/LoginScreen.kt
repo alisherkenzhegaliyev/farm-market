@@ -104,7 +104,7 @@ fun LoginScreen(
         Button(
             onClick = {
                 viewModel.login()
-                if (uiState.value.loginState is LoginState.Success) {
+                if (uiState.value.loginState is AuthorizationState.Success) {
                     if (uiState.value.chosenRole == Role.Farmer) {
                         onNavigateToFarmerDashboard()
                     } else {
@@ -131,20 +131,20 @@ fun LoginScreen(
         }
 
         when(uiState.value.loginState) {
-            is LoginState.Loading -> {
+            is AuthorizationState.Loading -> {
                 CircularProgressIndicator()
             }
-            is LoginState.Success -> {
+            is AuthorizationState.Success -> {
                 Text(
-                    (uiState.value.loginState as LoginState.Success).successMsg,
+                    (uiState.value.loginState as AuthorizationState.Success).successMsg,
                     color = Color.Green,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            is LoginState.Error -> {
+            is AuthorizationState.Error -> {
                 Text(
-                    (uiState.value.loginState as LoginState.Error).errorMsg,
+                    (uiState.value.loginState as AuthorizationState.Error).errorMsg,
                     color = Color.Red,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()

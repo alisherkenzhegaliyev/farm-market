@@ -39,7 +39,7 @@ class LoginViewModel(
         val role = _uiState.value.chosenRole.name
 
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loginState = LoginState.Loading)
+            _uiState.value = _uiState.value.copy(loginState = AuthorizationState.Loading)
 
             try {
                 val response = farmMarketRepository.login(
@@ -50,18 +50,18 @@ class LoginViewModel(
 
                 if(response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(
-                        loginState = LoginState.Success(response.body()?.message ?: "Unknown Error for not null msg")
+                        loginState = AuthorizationState.Success(response.body()?.message ?: "Unknown Error for not null msg")
                     )
                 } else  {
                     val errorMsg = if(response.code() == 401) "Invalid Password" else if(response.code() == 404) "Given User does not exist" else "Unknown Error"
                     Log.i("LoginViewModel", "In error")
                     _uiState.value = _uiState.value.copy(
-                        loginState = LoginState.Error(errorMsg)
+                        loginState = AuthorizationState.Error(errorMsg)
                     )
                 }
             } catch(e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    loginState = LoginState.Error(e.message ?: "Unknown Error exception")
+                    loginState = AuthorizationState.Error(e.message ?: "Unknown Error exception")
                 )
             }
         }
@@ -74,7 +74,7 @@ data class LoginUiState(
     val passwordEntry: String = "",
     val passwordVisible: Boolean = false,
     val chosenRole: Role = Role.Farmer,
-    val loginState: LoginState = LoginState.Idle
+    val loginState: AuthorizationState = AuthorizationState.Idle
 )
 
 enum class Role {
@@ -82,10 +82,10 @@ enum class Role {
     Farmer
 }
 
-sealed class LoginState {
-    object Idle : LoginState()
-    object Loading : LoginState()
-    data class Success(val successMsg: String) : LoginState()
-    data class Error(val errorMsg: String) : LoginState()
+sealed class AuthorizationState {
+    object Idle : AuthorizationState()
+    object Loading : AuthorizationState()
+    data class Success(val successMsg: String) : AuthorizationState()
+    data class Error(val errorMsg: String) : AuthorizationState()
 }
 

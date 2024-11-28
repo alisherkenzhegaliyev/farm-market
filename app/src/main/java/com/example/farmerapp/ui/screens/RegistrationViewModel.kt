@@ -1,9 +1,14 @@
 package com.example.farmerapp.ui.screens
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
+import com.example.farmerapp.model.LoginResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import java.util.Locale
 
 data class RegistrationUiState(
     val name: String = "",
@@ -22,7 +27,8 @@ data class RegistrationUiState(
     val errorMessage: String = "",
     val registrationStatus: String = "",
     val userType: String = "Buyer",
-    val emailValidity: Boolean = false
+    val emailValidity: Boolean = false,
+    val registrationState: AuthorizationState = AuthorizationState.Idle
 )
 
 class RegistrationViewModel(
@@ -89,14 +95,50 @@ class RegistrationViewModel(
     }
 
     // Registration logic
-    fun registerFarmer() {
-        val currentState = _uiState.value
-        if (currentState.name.isBlank() || currentState.email.isBlank() || currentState.phoneNumber.isBlank() ||
-                currentState.farmAddress.isBlank() || currentState.farmSize.isBlank() || currentState.cropTypes.isBlank() || currentState.govtId.isBlank() || !currentState.emailValidity
-        ) {
-            _uiState.update { it.copy(errorMessage = "Some Fields are empty or Email is invalid", registrationStatus = "") }
-        } else {
-            _uiState.update { it.copy(registrationStatus = "Farmer registration successful. Verification email/SMS sent.", errorMessage = "") }
+    fun register() {
+        _uiState.update { it.copy(registrationState = AuthorizationState.Loading) }
+
+        viewModelScope.launch {
+            try {
+                val response: Response<LoginResponse>
+                if(uiState.value.userType == "Farmer") {
+                    response = farmerMarketRepository.registerFarmer(
+                        name = uiState.value.name,
+                        email = uiState.value.email,
+                        password = uiState.value.password,
+                        phone = uiState.value.phoneNumber,
+                        farmAddress = uiState.value.farmAddress,
+                        farmSize = uiState.value.farmSize,
+                        govtId = uiState.value.govtId,
+                        cropTypes = uiState.value.cropTypes
+                    )
+                } else {
+                    response = farmerMarketRepository.registerBuyer(
+                        name = uiState.value.name,
+                        email = uiState.value.email,
+                        password = uiState.value.password,
+                        phone = uiState.value.phoneNumber,
+                        address = uiState.value.deliveryAddress,
+                        ppm = uiState.value.paymentMethod
+                    )
+                }
+
+                if (response.isSuccessful) {
+                    _uiState.update {
+                        it.copy(registrationState = AuthorizationState.Success(successMsg = response.body()?.message ?: "Successful"))
+                    }
+                } else {
+                    val errorMsg = if(response.code() == 401) "Such user already exists" else "Fields are invalid"
+                    _uiState.update {
+                        it.copy(registrationState = AuthorizationState.Error(errorMsg = errorMsg))
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(registrationState = AuthorizationState.Error(errorMsg = e.message ?: "Unknown Error"))
+                }
+            }
+
         }
     }
 

@@ -3,6 +3,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -175,7 +177,7 @@ fun RegistrationScreen(
                     onDismissRequest = { expanded = false },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val paymentOptions = listOf("Apple Pay", "Google Pay", "Card")
+                    val paymentOptions = listOf("apple pay", "google pay", "card")
                     paymentOptions.forEach { option ->
                         DropdownMenuItem(
                             onClick = {
@@ -195,7 +197,7 @@ fun RegistrationScreen(
         // Register Button
         Button(
             onClick = {
-                if (uiState.value.userType == "Farmer") viewModel.registerFarmer() else viewModel.registerBuyer()
+                viewModel.register()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -219,6 +221,31 @@ fun RegistrationScreen(
         TextButton(onClick = onNavigateToLogin) {
             Text("Back to Login")
         }
+
+        when(uiState.value.registrationState) {
+            is AuthorizationState.Loading -> {
+                CircularProgressIndicator()
+            }
+            is AuthorizationState.Success -> {
+                Text(
+                    (uiState.value.registrationState as AuthorizationState.Success).successMsg,
+                    color = Color.Green,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            is AuthorizationState.Error -> {
+                Text(
+                    (uiState.value.registrationState as AuthorizationState.Error).errorMsg,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            else -> {}
+        }
+
     }
 }
 

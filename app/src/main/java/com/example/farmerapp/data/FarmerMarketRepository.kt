@@ -1,15 +1,11 @@
 package com.example.farmerapp.data
 
 import android.util.Log
-import com.example.farmerapp.model.BuyerRegistrationRequest
-import com.example.farmerapp.model.FarmerRegistrationRequest
 import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.LoginResponse
-import com.example.farmerapp.model.Product
+import com.example.farmerapp.model.RegistrationRequest
 import com.example.farmerapp.service.FarmerMarketApiService
-import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
-import retrofit2.http.Body
 
 interface FarmerMarketRepository {
     suspend fun login(email: String, password: String, role: String): Response<LoginResponse>
@@ -55,7 +51,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         cropTypes: String,
         govtId: String
     ): Response<LoginResponse> {
-        val request = FarmerRegistrationRequest(
+        val request = RegistrationRequest(
             name = name,
             email = email,
             password = password,
@@ -66,7 +62,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
             cropTypes = cropTypes,
             govtId = govtId
         )
-        return farmerMarketApiService.registerFarmer(request)
+        return farmerMarketApiService.register(request)
     }
 
     override suspend fun registerBuyer(
@@ -77,7 +73,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         address: String,
         ppm: String
     ): Response<LoginResponse> {
-        val request = BuyerRegistrationRequest(
+        val request = RegistrationRequest(
             name = name,
             email = email,
             password = password,
@@ -86,6 +82,6 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
             address = address,
             ppm = ppm
         )
-        return farmerMarketApiService.registerBuyer(request)
+        return farmerMarketApiService.register(request)
     }
 }
