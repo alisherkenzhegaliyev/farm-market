@@ -73,6 +73,16 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
+            value = uiState.value.password,
+            onValueChange = viewModel::updatePassword,
+            label = { Text("Password") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextField(
             value = uiState.value.phoneNumber,
             onValueChange = viewModel::updatePhoneNumber,
             label = { Text("Phone Number") },
@@ -102,20 +112,42 @@ fun RegistrationScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
-                value = uiState.value.cropTypes,
-                onValueChange = viewModel::updateCropTypes,
-                label = { Text("Types of Crops") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextField(
                 value = uiState.value.govtId,
                 onValueChange = viewModel::updateGovtId,
                 label = { Text("Government-issued ID") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            var expanded by remember { mutableStateOf(false) }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    onClick = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = uiState.value.cropTypes.ifBlank { "Select Crop Type"})
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val farmOptions = listOf("Vegetables", "Fruits", "Grains", "Dairy")
+                    farmOptions.forEach { option ->
+                        DropdownMenuItem(
+                            onClick = {
+                                viewModel.updateCropTypes(option)
+                                expanded = false
+                            },
+                            text = { Text(option) }
+                        )
+                    }
+                }
+            }
+
+
         }
 
         if (uiState.value.userType == "Buyer") {
@@ -131,12 +163,31 @@ fun RegistrationScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextField(
-                value = uiState.value.paymentMethod,
-                onValueChange = viewModel::updatePaymentMethod,
-                label = { Text("Preferred Payment Method") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            var expanded by remember { mutableStateOf(false) }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = { expanded = !expanded }, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = uiState.value.paymentMethod.ifBlank { "Select Payment Method" })
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val paymentOptions = listOf("Apple Pay", "Google Pay", "Card")
+                    paymentOptions.forEach { option ->
+                        DropdownMenuItem(
+                            onClick = {
+                                viewModel.updatePaymentMethod(option)
+                                expanded = false
+                            },
+                            text = { Text(option) }
+                        )
+                    }
+                }
+            }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.update
 data class RegistrationUiState(
     val name: String = "",
     val email: String = "",
+    val password: String = "",
     val phoneNumber: String = "",
     // Farmer-specific fields
     val farmAddress: String = "",
@@ -40,6 +41,12 @@ class RegistrationViewModel(
         _uiState.update {
             val isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
             it.copy(email = email, errorMessage = if (isValid) "" else "Invalid email format", emailValidity = isValid)
+        }
+    }
+
+    fun updatePassword(newPassword: String) {
+        _uiState.update { currentState ->
+            currentState.copy(password = newPassword)
         }
     }
 
