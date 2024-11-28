@@ -26,9 +26,25 @@ data class LoginResponse(
     @SerializedName("error") val error: String? // Example nested data
 )
 
-data class RegistrationRequest(
+data class BuyerRegistrationRequest(
+    @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String,
-    @SerializedName("user_type") val userType: String
+    @SerializedName("user_type") val userType: String,
+    @SerializedName("phone") val phoneNumber: String,
+    @SerializedName("address") val address: String,
+    @SerializedName("preferred_payment_method") val ppm: String
+)
+
+data class FarmerRegistrationRequest(
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("user_type") val userType: String,
+    @SerializedName("phone") val phoneNumber: String,
+    @SerializedName("farmlocation") val farmAddress: String,
+    @SerializedName("farm_size") val farmSize: String,
+    @SerializedName("crop_type") val cropTypes: String,
+    @SerializedName("governmentid") val govtId: String
 
 )

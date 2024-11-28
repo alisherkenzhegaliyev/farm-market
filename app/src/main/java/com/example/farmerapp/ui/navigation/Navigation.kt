@@ -18,7 +18,7 @@ import com.example.farmerapp.ui.screens.RegistrationScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "register") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
