@@ -110,6 +110,8 @@ fun LoginScreen(
                     } else {
                         onNavigateToBuyerDashboard()
                     }
+                } else {
+
                 }
             }, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
@@ -140,7 +142,6 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-
             is LoginState.Error -> {
                 Text(
                     (uiState.value.loginState as LoginState.Error).errorMsg,

@@ -7,6 +7,7 @@ import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.LoginResponse
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.service.FarmerMarketApiService
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 
@@ -41,6 +42,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         val request = LoginRequest(email, password, role)
         Log.i("LoginViewModel", "LoginRequest created: $request")
         return farmerMarketApiService.login(request)
+
     }
 
     override suspend fun registerFarmer(

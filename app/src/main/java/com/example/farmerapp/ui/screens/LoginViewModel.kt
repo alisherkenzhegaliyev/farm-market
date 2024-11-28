@@ -48,14 +48,15 @@ class LoginViewModel(
                     role
                 )
 
-                if(response.body()?.message != null) {
+                if(response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(
                         loginState = LoginState.Success(response.body()?.message ?: "Unknown Error for not null msg")
                     )
-                } else {
-                    Log.i("LoginViewModel", "IN error")
+                } else  {
+                    val errorMsg = if(response.code() == 401) "Invalid Password" else if(response.code() == 404) "Given User does not exist" else "Unknown Error"
+                    Log.i("LoginViewModel", "In error")
                     _uiState.value = _uiState.value.copy(
-                        loginState = LoginState.Error(response.body()?.error ?: "Unknown Error")
+                        loginState = LoginState.Error(errorMsg)
                     )
                 }
             } catch(e: Exception) {
