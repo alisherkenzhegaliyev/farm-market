@@ -40,3 +40,18 @@ data class RegistrationRequest(
     @SerializedName("governmentid") val govtId: String? = null,
 )
 
+<<<<<<< HEAD
+=======
+data class FarmerRegistrationRequest(
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("user_type") val userType: String,
+    @SerializedName("phone") val phoneNumber: String,
+    @SerializedName("farmlocation") val farmAddress: String,
+    @SerializedName("farm_size") val farmSize: String,
+    @SerializedName("crop_type") val cropTypes: String,
+    @SerializedName("governmentid") val govtId: String
+
+)
+>>>>>>> d4cf4e40251fa1721b456ba07e68bb92c468ea27
