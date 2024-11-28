@@ -40,11 +40,11 @@ data class FarmerRegistrationRequest(
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String,
+    @SerializedName("user_type") val userType: String,
     @SerializedName("phone") val phoneNumber: String,
     @SerializedName("farmlocation") val farmAddress: String,
     @SerializedName("farm_size") val farmSize: String,
     @SerializedName("crop_type") val cropTypes: String,
-    @SerializedName("governmentid") val govtId: String,
-    @SerializedName("user_type") val userType: String,
+    @SerializedName("governmentid") val govtId: String
 
 )
