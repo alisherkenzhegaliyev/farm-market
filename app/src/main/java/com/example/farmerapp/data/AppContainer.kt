@@ -3,10 +3,12 @@
 package com.example.farmerapp.data
 
 import com.example.farmerapp.service.FarmerMarketApiService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
+import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 interface AppContainer {
     val farmerMarketRepository: FarmerMarketRepository
@@ -15,10 +17,21 @@ interface AppContainer {
 
 class DefaultAppContainer : AppContainer {
     private val baseUrl = "http://10.101.29.34:8000/"
+
+//    val loggingInterceptor = HttpLoggingInterceptor()
+//    loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+//
+//    val client = OkHttpClient.Builder()
+//        .addInterceptor {
+//
+//        }
+//        .build()
+
+
     val retrofit: Retrofit =
         Retrofit.Builder()
             .baseUrl(baseUrl)
-            .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
 
     val retrofitService: FarmerMarketApiService by lazy {

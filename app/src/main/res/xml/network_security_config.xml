@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">http://10.101.29.34:8000/</domain> <!-- Example for Android Emulator -->
+    </domain-config>
+</network-security-config>

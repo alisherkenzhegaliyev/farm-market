@@ -9,8 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,11 +36,33 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // App Logo
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = "App Logo",
-            modifier = Modifier.size(80.dp)
-        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            TextButton(
+                onClick = { viewModel.updateRole(Role.Buyer) },
+                enabled = uiState.value.chosenRole != Role.Buyer
+            ) {
+                Text("Buyer")
+            }
+
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "App Logo",
+                modifier = Modifier.size(80.dp).align(Alignment.Bottom)
+            )
+
+            TextButton(
+                onClick = { viewModel.updateRole(Role.Farmer) },
+                enabled = uiState.value.chosenRole != Role.Farmer
+            ) {
+                Text("Farmer")
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -78,26 +102,57 @@ fun LoginScreen(
 
         // Login Button
         Button(
-            onClick = onNavigateToFarmerDashboard, // Use the navigation callback here
+            onClick = {
+                viewModel.login()
+                if (uiState.value.loginState is LoginState.Success) {
+                    if (uiState.value.chosenRole == Role.Farmer) {
+                        onNavigateToFarmerDashboard()
+                    } else {
+                        onNavigateToBuyerDashboard()
+                    }
+                }
+            }, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
         }
-
         Spacer(modifier = Modifier.height(8.dp))
 
         // Forgot Password and Register Navigation
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            TextButton(onClick = { /* Handle Forgot Password */ }) {
-                Text("Forgot Password?")
-            }
             TextButton(onClick = onNavigateToRegister) {
-                Text("Register")
+                Text("Register", textAlign = TextAlign.End, modifier = Modifier.fillMaxWidth())
             }
         }
+
+        when(uiState.value.loginState) {
+            is LoginState.Loading -> {
+                CircularProgressIndicator()
+            }
+            is LoginState.Success -> {
+                Text(
+                    (uiState.value.loginState as LoginState.Success).successMsg,
+                    color = Color.Green,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            is LoginState.Error -> {
+                Text(
+                    (uiState.value.loginState as LoginState.Error).errorMsg,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            else -> {}
+        }
+
     }
 }
 
