@@ -5,13 +5,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -21,7 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
 
 @Composable
 fun BuyerHomeScreen() {
@@ -100,7 +96,7 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifi
         modifier = modifier
     ) {
         composable("home") { BuyerDashboardScreen() }
-        composable("chat") { ExploreScreen() }
+        composable("chat") { ChatScreen() }
         composable("cart") { CartScreen() }
         composable("profile") { ProfileScreen() }
     }
@@ -114,18 +110,4 @@ fun BuyerDashboardScreen() {
     BuyerInterfaceScreen()
 }
 
-@Composable
-fun ExploreScreen() {
-    Text("Explore Screen")
-}
-
-@Composable
-fun CartScreen() {
-    Text("Cart Screen")
-}
-
-@Composable
-fun ProfileScreen() {
-    Text("Profile Screen")
-}
 
