@@ -142,14 +142,4 @@ class RegistrationViewModel(
         }
     }
 
-    fun registerBuyer() {
-        val currentState = _uiState.value
-        if (currentState.name.isBlank() || currentState.email.isBlank() || currentState.phoneNumber.isBlank() ||
-            currentState.deliveryAddress.isBlank() || currentState.paymentMethod.isBlank() || !currentState.emailValidity
-        ) {
-            _uiState.update { it.copy(errorMessage = "Some Fields are empty or Email is invalid", registrationStatus = "") }
-        } else {
-            _uiState.update { it.copy(registrationStatus = "Buyer registration successful. Verification email/SMS sent.", errorMessage = "") }
-        }
-    }
 }
