@@ -19,7 +19,7 @@ import com.example.farmerapp.ui.screens.RegistrationScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "buyer_home") {
+    NavHost(navController = navController, startDestination = "farmer_dashboard") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
@@ -59,6 +59,11 @@ fun AppNavigation() {
                 onEditScreen = { id ->
                     navController.navigate(route = "edit?id=$id")
                 }
+//                onDeleteProduct = { id ->
+//                    // Add your delete logic here
+//                    println("Delete product with id: $id")
+//                }
+
             )
         }
 
