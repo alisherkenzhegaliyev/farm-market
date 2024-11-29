@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
+import com.example.farmerapp.data.preferences.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val farmMarketRepository:  FarmerMarketRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -54,6 +56,15 @@ class LoginViewModel(
                         loginState = AuthorizationState.Success(successMsg)
                     )
 
+                    val userId = response.body()?.message ?: "-1"
+                    val userName = response.body()?.name ?: "unknown"
+
+
+                    sessionManager.saveUserDetail(
+                        userId = userId,
+                        userType = _uiState.value.chosenRole.name,
+                        userName = userName
+                    )
 
 
                 } else  {

@@ -22,6 +22,7 @@ data class LoginRequest(
 
 data class RequestResponse(
     @SerializedName("message") val message: String?, // Example field, adjust to your response
+    @SerializedName("name") val name: String?
 )
 
 data class RegistrationRequest(

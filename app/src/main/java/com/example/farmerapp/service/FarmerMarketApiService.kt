@@ -4,6 +4,7 @@ import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RegistrationRequest
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -19,7 +20,7 @@ interface FarmerMarketApiService {
     suspend fun register(@Body request: RegistrationRequest): Response<RequestResponse>
 
     @GET("/api/farmer/{id}/products/")
-    suspend fun getFarmersProducts(@Path("id") id: String): List<Product>
+    suspend fun getFarmersProducts(@Path("id") id: String): Flow<List<Product>>
 
     @POST("/api/farmer/addproduct/")
     suspend fun addProduct(@Body product: Product): Response<RequestResponse>

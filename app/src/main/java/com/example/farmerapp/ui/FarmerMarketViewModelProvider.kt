@@ -16,7 +16,8 @@ object FarmerMarketViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             LoginViewModel(
-                farmerMarketApplication().container.farmerMarketRepository
+                farmerMarketApplication().container.farmerMarketRepository,
+                farmerMarketApplication().sessionManager
             )
         }
 
