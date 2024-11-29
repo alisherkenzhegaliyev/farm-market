@@ -41,7 +41,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
+                .background(Color.LightGray, shape = RoundedCornerShape(32.dp))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -94,7 +94,7 @@ fun ChatMessageItem(message: Message) {
             modifier = Modifier
                 .background(
                     if (message.senderId == "Buyer") Color(0xff5068F2) else Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(32.dp)
                 )
                 .padding(12.dp)
         ) {
