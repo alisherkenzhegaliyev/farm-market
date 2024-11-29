@@ -2,13 +2,12 @@ package com.example.farmerapp.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
-import com.example.farmerapp.model.LoginResponse
+import com.example.farmerapp.model.RequestResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.util.Locale
 
 data class RegistrationUiState(
     val name: String = "",
@@ -100,7 +99,7 @@ class RegistrationViewModel(
 
         viewModelScope.launch {
             try {
-                val response: Response<LoginResponse>
+                val response: Response<RequestResponse>
                 if(uiState.value.userType == "Farmer") {
                     response = farmerMarketRepository.registerFarmer(
                         name = uiState.value.name,

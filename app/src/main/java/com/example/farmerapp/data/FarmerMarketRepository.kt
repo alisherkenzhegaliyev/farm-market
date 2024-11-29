@@ -2,13 +2,13 @@ package com.example.farmerapp.data
 
 import android.util.Log
 import com.example.farmerapp.model.LoginRequest
-import com.example.farmerapp.model.LoginResponse
+import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.RegistrationRequest
 import com.example.farmerapp.service.FarmerMarketApiService
 import retrofit2.Response
 
 interface FarmerMarketRepository {
-    suspend fun login(email: String, password: String, role: String): Response<LoginResponse>
+    suspend fun login(email: String, password: String, role: String): Response<RequestResponse>
     suspend fun registerFarmer(
         name: String,
         email: String,
@@ -18,7 +18,7 @@ interface FarmerMarketRepository {
         farmSize: String,
         cropTypes: String,
         govtId: String
-    ): Response<LoginResponse>
+    ): Response<RequestResponse>
 
     suspend fun registerBuyer(
         name: String,
@@ -27,13 +27,13 @@ interface FarmerMarketRepository {
         phone: String,
         address: String,
         ppm: String
-    ): Response<LoginResponse>
+    ): Response<RequestResponse>
 
 
 }
 
 class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMarketApiService) : FarmerMarketRepository {
-    override suspend fun login(email: String, password: String, role: String): Response<LoginResponse> {
+    override suspend fun login(email: String, password: String, role: String): Response<RequestResponse> {
         Log.i("LoginViewModel", "login() called with email: $email, password: $password, role: $role")
         val request = LoginRequest(email, password, role)
         Log.i("LoginViewModel", "LoginRequest created: $request")
@@ -50,7 +50,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         farmSize: String,
         cropTypes: String,
         govtId: String
-    ): Response<LoginResponse> {
+    ): Response<RequestResponse> {
         val request = RegistrationRequest(
             name = name,
             email = email,
@@ -72,7 +72,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         phone: String,
         address: String,
         ppm: String
-    ): Response<LoginResponse> {
+    ): Response<RequestResponse> {
         val request = RegistrationRequest(
             name = name,
             email = email,

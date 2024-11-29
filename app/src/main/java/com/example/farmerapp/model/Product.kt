@@ -4,16 +4,15 @@ import com.google.gson.annotations.SerializedName
 
 
 data class Product(
-    val id: String,
+    val productID: String,
+    val farmID: String,
     val name: String,
-    val price: Double,
-    val quantity: Int,
-    val farm: String,
-    val description: String,
-    val category: String,
-    val rating: Int,
-    val createdAt: Long
+    val price: String,
+    val quantity: String,
+    val farmerID: String
 )
+
+
 
 data class LoginRequest(
     @SerializedName("email") val email: String,
@@ -21,9 +20,8 @@ data class LoginRequest(
     @SerializedName("user_type") val userType: String // Make sure these match your API
 )
 
-data class LoginResponse(
+data class RequestResponse(
     @SerializedName("message") val message: String?, // Example field, adjust to your response
-    @SerializedName("error") val error: String? // Example nested data
 )
 
 data class RegistrationRequest(
