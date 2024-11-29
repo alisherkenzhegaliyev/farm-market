@@ -40,8 +40,8 @@ data class RegistrationRequest(
     @SerializedName("governmentid") val govtId: String? = null,
 )
 
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 data class FarmerRegistrationRequest(
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
@@ -54,4 +54,4 @@ data class FarmerRegistrationRequest(
     @SerializedName("governmentid") val govtId: String
 
 )
->>>>>>> d4cf4e40251fa1721b456ba07e68bb92c468ea27
+//>>>>>>> d4cf4e40251fa1721b456ba07e68bb92c468ea27

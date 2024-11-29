@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.farmerapp.ui.buyer.BuyerHomeScreen
 import com.example.farmerapp.ui.buyer.BuyerInterfaceScreen
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
@@ -18,7 +19,7 @@ import com.example.farmerapp.ui.screens.RegistrationScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "buyer_home") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
@@ -40,6 +41,11 @@ fun AppNavigation() {
             )
         }
 
+        // Add Buyer Home Screen with Bottom Navigation
+        composable("buyer_home") {
+            BuyerHomeScreen() // Use your BuyerHomeScreen composable here
+        }
+
 
         // Add Product Screen
         composable("add_product") {
@@ -54,11 +60,6 @@ fun AppNavigation() {
                     navController.navigate(route = "edit?id=$id")
                 }
             )
-        }
-
-        // Add Buyer Interface Screen
-        composable("buyer_interface") {
-            BuyerInterfaceScreen()
         }
 
         composable(
