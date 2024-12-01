@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.buyer
 
+import CartScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -97,7 +98,6 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifi
     ) {
         composable("home") { BuyerDashboardScreen() }
         composable("chat") { ChatScreen() }
-        composable("cart") { CartScreen() }
         composable("profile") { ProfileScreen() }
     }
 }
