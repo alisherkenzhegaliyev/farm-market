@@ -1,4 +1,4 @@
-package com.example.farmerapp.ui.buyer
+package com.example.farmerapp.ui.General
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

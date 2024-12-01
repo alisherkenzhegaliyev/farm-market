@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,7 +27,7 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
     val currentRoute = viewModel.currentRoute.collectAsState().value.name
 
 
-    NavHost(navController = navController, startDestination = "farmer_dashboard") {
+    NavHost(navController = navController, startDestination = "login") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
@@ -51,7 +52,8 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
 
         // Add Buyer Home Screen with Bottom Navigation
         composable("buyer_home") {
-            BuyerHomeScreen() // Use your BuyerHomeScreen composable here
+            Log.i("BuyerHomeScreen", "BuyerHomeScreen")
+            BuyerInterfaceScreen() // Use your BuyerHomeScreen composable here
         }
 
 

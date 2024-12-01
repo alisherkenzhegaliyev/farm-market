@@ -1,4 +1,4 @@
-package com.example.farmerapp.ui.buyer
+package com.example.farmerapp.ui.General
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

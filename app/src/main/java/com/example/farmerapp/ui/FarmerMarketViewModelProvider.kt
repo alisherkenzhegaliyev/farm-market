@@ -7,12 +7,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.farmerapp.FarmerMarketApplication
 import com.example.farmerapp.ui.buyer.BuyerDashboardViewModel
+import com.example.farmerapp.ui.buyer.CartScreenViewModel
 import com.example.farmerapp.ui.buyer.ChatViewModel
-import com.example.farmerapp.ui.buyer.ProfileViewModel
+import com.example.farmerapp.ui.General.ProfileViewModel
 import com.example.farmerapp.ui.farmer.AddProductViewModel
 import com.example.farmerapp.ui.farmer.EditScreenViewModel
 import com.example.farmerapp.ui.farmer.ManageProductViewModel
-import com.example.farmerapp.ui.navigation.AppNavigation
 import com.example.farmerapp.ui.navigation.NavigationViewModel
 import com.example.farmerapp.ui.screens.LoginViewModel
 import com.example.farmerapp.ui.screens.RegistrationViewModel
@@ -78,7 +78,12 @@ object FarmerMarketViewModelProvider {
                 farmerMarketApplication().sessionManager
             )
         }
-
+        initializer {
+            CartScreenViewModel(
+                farmerMarketApplication().container.farmerMarketRepository,
+                farmerMarketApplication().sessionManager
+            )
+        }
     }
 }
 

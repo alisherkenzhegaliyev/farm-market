@@ -51,9 +51,11 @@ interface FarmerMarketRepository {
 
     suspend fun getProduct(id: Int): Product
 
-    fun getProducts(): Flow<List<Product>>
+    fun getAllProducts(): Flow<List<Product>>
 
     suspend fun addToCart(cartItem: Cart): Response<RequestResponse>
+
+    suspend fun getCartItems(buyerId: Int): List<Cart>
 }
 
 class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMarketApiService) : FarmerMarketRepository {
@@ -138,12 +140,19 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         return farmerMarketApiService.getProduct(id)
     }
 
-    override fun getProducts(): Flow<List<Product>> {
-        return farmerMarketApiService.getProducts()
+    override fun getAllProducts(): Flow<List<Product>> {
+        return flow {
+            Log.i("getproducts", "in get products")
+            emit(farmerMarketApiService.getAllProducts())
+        }
     }
 
     override suspend fun addToCart(cartItem: Cart): Response<RequestResponse> {
         return farmerMarketApiService.addToCart(cartItem)
+    }
+
+    override suspend fun getCartItems(buyerId: Int): List<Cart> {
+        return farmerMarketApiService.getCartItems(buyerId)
     }
 
 }

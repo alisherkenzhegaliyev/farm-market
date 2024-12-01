@@ -1,6 +1,5 @@
 package com.example.farmerapp.ui.buyer
 
-import CartScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -19,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.farmerapp.ui.General.ProfileScreen
 
 @Composable
 fun BuyerHomeScreen() {

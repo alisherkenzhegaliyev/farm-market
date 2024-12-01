@@ -27,16 +27,17 @@ class BuyerDashboardViewModel(
     val request = requestState
 
     val uiState: StateFlow<ProductListUiState> =
-        farmerMarketRepository.getProducts().map { ProductListUiState(productList = it.map { product -> ProductWithCounter(product) }) }
+        farmerMarketRepository.getAllProducts().map { ProductListUiState(productList = it.map { product -> ProductWithCounter(product) }) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = ProductListUiState()
             )
-    fun addToCart(pr: ProductWithCounter){
+
+    fun addToCart(pr: ProductWithCounter, counter : Int) {
         val toAdd = Cart(
             productId = pr.pr.productID,
-            quantity = pr.counter,
+            quantity = counter,
             buyerId = sessionManager.getUserId().toInt(),
             farmerId = pr.pr.farmerID,
             status = "active",
@@ -53,7 +54,7 @@ class BuyerDashboardViewModel(
                         id = pr.pr.productID,
                         name = pr.pr.name,
                         price = pr.pr.price.toFloat(),
-                        quantity = pr.pr.quantity.toInt() - pr.counter)
+                        quantity = pr.pr.quantity.toInt() - counter)
                 } else {
                     requestState.value = requestState.value.copy(requestState = BuyerState.Error("Error adding to cart"))
                 }
@@ -82,6 +83,5 @@ data class ProductListUiState(
 )
 
 data class ProductWithCounter(
-    val pr: Product,
-    val counter: Int = 0
+    val pr: Product
 )

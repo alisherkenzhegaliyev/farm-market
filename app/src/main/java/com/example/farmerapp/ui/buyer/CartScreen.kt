@@ -8,13 +8,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import com.example.farmerapp.ui.buyer.CartItem
 import com.example.farmerapp.ui.buyer.CartScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(viewModel: CartScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
-    val cartItems = viewModel.cartItems
-    val totalPrice = viewModel.getTotalPrice()
+fun CartScreen(viewModel: CartScreenViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
+    val uiState = viewModel.uiState
+
+    val cartItems = uiState.value.cartItems
+    val totalPrice = uiState.value.totalPrice
 
     Scaffold(
         topBar = {
@@ -64,17 +69,16 @@ fun CartItemRow(cartItem: CartItem) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(text = cartItem.name, fontSize = 16.sp)
+            Text(text = cartItem.pr.name, fontSize = 16.sp)
             Text(text = "Price: $${"%.2f".format(cartItem.price)}", fontSize = 14.sp)
         }
         Text(text = "x${cartItem.quantity}")
     }
 }
 
-data class CartItem(val name: String, val price: Double, val quantity: Int)
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewCartScreen() {
-    CartScreen(viewModel = CartScreenViewModel())
+    CartScreen()
 }

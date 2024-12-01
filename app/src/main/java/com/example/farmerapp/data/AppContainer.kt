@@ -4,6 +4,7 @@ package com.example.farmerapp.data
 
 import com.example.farmerapp.service.FarmerMarketApiService
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,6 +33,7 @@ class DefaultAppContainer : AppContainer {
         Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
 
     val retrofitService: FarmerMarketApiService by lazy {

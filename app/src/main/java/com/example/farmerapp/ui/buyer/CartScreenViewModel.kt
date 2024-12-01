@@ -1,35 +1,54 @@
 package com.example.farmerapp.ui.buyer
-import CartItem
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.example.farmerapp.data.FarmerMarketRepository
+import com.example.farmerapp.data.preferences.SessionManager
+import com.example.farmerapp.model.Product
+import kotlinx.coroutines.launch
 
-class CartScreenViewModel : ViewModel() {
+class CartScreenViewModel(
+    farmerMarketRepository: FarmerMarketRepository,
+    sessionManager: SessionManager
+) : ViewModel() {
     // State for cart items
-    var cartItems by mutableStateOf(
-        listOf(
-            CartItem(name = "Apple", price = 1.2, quantity = 3),
-            CartItem(name = "Banana", price = 0.8, quantity = 2),
-            CartItem(name = "Orange", price = 1.5, quantity = 1)
-        )
-    )
+    private val _uiState = mutableStateOf(CartUiState())
+    val uiState = _uiState
 
-    // Function to update the quantity of a specific item
-    fun updateQuantity(itemName: String, newQuantity: Int) {
-        cartItems = cartItems.map {
-            if (it.name == itemName) it.copy(quantity = newQuantity) else it
+    init {
+        _uiState.value = _uiState.value.copy(state = BuyerState.Loading)
+
+        viewModelScope.launch {
+            try {
+                val cartItems = farmerMarketRepository.getCartItems(sessionManager.getUserId().toInt())
+                var totalPrice = 0f
+                val productList = cartItems.map { cartItem ->
+                    val product = farmerMarketRepository.getProduct(cartItem.productId)
+                    CartItem(pr = product, quantity = cartItem.quantity, price = product.price.toFloat())
+                }
+                productList.forEach {
+                    totalPrice += it.price * it.quantity
+                }
+                _uiState.value = _uiState.value.copy(cartItems = productList, state = BuyerState.Success("Success"))
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(state = BuyerState.Error("Failed to fetch cart items"))
+            }
         }
     }
 
-    // Function to calculate total price
-    fun getTotalPrice(): Double {
-        return cartItems.sumOf { it.price * it.quantity }
-    }
-
-    // Function to remove an item from the cart
-    fun removeItem(itemName: String) {
-        cartItems = cartItems.filter { it.name != itemName }
-    }
 }
 
+
+data class CartUiState(
+    val cartItems: List<CartItem> = emptyList(),
+    val totalPrice: Float = 0f,
+    val state: BuyerState = BuyerState.Idle
+)
+
+data class CartItem(
+    val pr: Product,
+    val quantity: Int,
+    val price: Float
+)

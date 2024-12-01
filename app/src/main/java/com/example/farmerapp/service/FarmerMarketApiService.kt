@@ -7,7 +7,6 @@ import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RegistrationRequest
-import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -37,10 +36,21 @@ interface FarmerMarketApiService {
     suspend fun getProduct(@Path("id") id: Int): Product
 
     @GET("/api/products/")
-    fun getProducts(): Flow<List<Product>>
+    fun getAllProducts(): List<Product>
 
     @POST("/api/product/add/cart")
     suspend fun addToCart(@Body cartItem: Cart): Response<RequestResponse>
+
+    @GET("/api/product/cart/{buyerid}")
+    suspend fun getCartItems(@Path("buyerid") buyerId: Int): List<Cart>
+
+    @GET("/api/buyer/chats/{buyerId}")
+    suspend fun getBuyerChats(@Path("buyerId") buyerId: Int): List<Chat>
+
+    @GET("/api/farmer/chats/{farmerId}")
+    suspend fun getFarmerChats(@Path("farmerId") farmerId: Int): List<Chat>
+
+    @POST
 }
 
 

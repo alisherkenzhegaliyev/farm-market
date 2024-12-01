@@ -9,9 +9,6 @@ data class Cart(
     val quantity: Int,
     val farmerId: Int,
     val status: String,
-    val price: Float,
-    val totalPrice: Float = quantity.toFloat() * price
-
 )
 
 data class Id(

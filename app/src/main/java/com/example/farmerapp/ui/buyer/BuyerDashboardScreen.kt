@@ -164,8 +164,7 @@ fun BuyerInterfaceScreen(
         // Product List
         LazyColumn {
             items(filteredProducts) { product ->
-                val index = allProducts.indexOf(product)
-                ProductCard(product = product, index = index)
+                ProductCard(product = product, viewModel::addToCart)
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -173,7 +172,7 @@ fun BuyerInterfaceScreen(
 }
 
 @Composable
-fun ProductCard(product: ProductWithCounter, onQuantityChange: (Int) -> Unit = {}, index: Int) {
+fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int) -> Unit) {
     val now = System.currentTimeMillis()
     val isNew = true // New if within 7 days
 
@@ -283,8 +282,7 @@ fun ProductCard(product: ProductWithCounter, onQuantityChange: (Int) -> Unit = {
                     }
                     Button(
                         onClick = {
-                            // Call the ViewModel function to send the request
-
+                            addToCart(product, counter)
                         },
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
