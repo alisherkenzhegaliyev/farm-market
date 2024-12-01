@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.buyer
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +9,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +36,8 @@ val DarkGreen = Color(0xFF388E3C)
 fun BuyerInterfaceScreen(
     viewModel: BuyerDashboardViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
 ) {
+
+    Log.i("BuyerInterfaceScreen", "Entered BuyerInterfaceScreen")
     // States for filters, search, price slider, category, and location
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategories by remember { mutableStateOf(setOf<String>()) }
@@ -84,6 +89,8 @@ fun BuyerInterfaceScreen(
 
     val uiState = viewModel.uiState.collectAsState()
     val allProducts = uiState.value.productList
+
+    Log.i("BuyerInterfaceScreen", "Products fetched, and they are: $allProducts")
 
     // Filtered Products Based on Search, Price, Category, and Location
     val filteredProducts = allProducts
@@ -157,7 +164,8 @@ fun BuyerInterfaceScreen(
         // Product List
         LazyColumn {
             items(filteredProducts) { product ->
-                ProductCard(product = product)
+                val index = allProducts.indexOf(product)
+                ProductCard(product = product, index = index)
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -165,9 +173,11 @@ fun BuyerInterfaceScreen(
 }
 
 @Composable
-fun ProductCard(product: ProductWithCounter) {
+fun ProductCard(product: ProductWithCounter, onQuantityChange: (Int) -> Unit = {}, index: Int) {
     val now = System.currentTimeMillis()
     val isNew = true // New if within 7 days
+
+    var counter by remember {mutableStateOf(0)}
 
     Card(
         modifier = Modifier
@@ -232,6 +242,56 @@ fun ProductCard(product: ProductWithCounter) {
 //                    text = product.location,
 //                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
 //                )
+                // Quantity Counter
+
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            if (counter > 0) {
+                                counter -= 1 // Decrease quantity
+                            }
+                        },
+                        enabled = counter > 0
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Remove,
+                            contentDescription = "Decrease Quantity",
+                            tint = Color.Gray
+                        )
+                    }
+                    Text(
+                        text = counter.toString(),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp)
+                    )
+                    IconButton(
+                        onClick = {
+                            if (counter < product.pr.quantity.toInt()) {
+                                counter += 1 // Increase quantity
+                            }
+                        },
+                        enabled = counter < product.pr.quantity.toInt()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Increase Quantity",
+                            tint = GrassGreen
+                        )
+                    }
+                    Button(
+                        onClick = {
+                            // Call the ViewModel function to send the request
+
+                        },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text("Add to Cart")
+                    }
+                }
+
 
             }
         }
