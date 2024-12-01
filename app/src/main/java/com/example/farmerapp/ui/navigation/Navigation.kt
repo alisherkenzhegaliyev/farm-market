@@ -26,7 +26,7 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
     val currentRoute = viewModel.currentRoute.collectAsState().value.name
 
 
-    NavHost(navController = navController, startDestination = currentRoute) {
+    NavHost(navController = navController, startDestination = "farmer_dashboard") {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
@@ -45,6 +45,7 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
             FarmerDashboardScreen(
                 onAddProduct = { navController.navigate(route = "add_product") },
                 onManageProducts = { navController.navigate(route = "manage_products") },
+                navController = navController
             )
         }
 

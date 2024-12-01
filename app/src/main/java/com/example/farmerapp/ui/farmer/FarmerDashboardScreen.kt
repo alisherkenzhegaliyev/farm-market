@@ -16,15 +16,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import com.example.farmerapp.ui.buyer.NavigationItem
 
 @Composable
 fun FarmerDashboardScreen(
     onAddProduct: () -> Unit,
     onManageProducts: () -> Unit,
+    navController: NavController // Pass NavController to FarmerDashboardScreen
 ) {
-
-
     Scaffold(
         topBar = { FarmerTopBar() },
         content = { padding ->
@@ -33,8 +35,61 @@ fun FarmerDashboardScreen(
                 onAddProduct = onAddProduct,
                 onManageProducts = onManageProducts,
             )
-        }
+        },
+        bottomBar = { FarmerBottomBar(navController = navController) } // Add BottomNavigationBar here
     )
+}
+
+@Composable
+fun FarmerBottomBar(navController: NavController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+
+    NavigationBar(
+        containerColor = Color.White, // Background color of the navigation bar
+        tonalElevation = 4.dp // Elevation effect
+    ) {
+        val navItems = listOf(
+            NavigationItem("Home", Icons.Default.Home, "home"),
+            NavigationItem("Chat", Icons.Filled.Chat, "chat"),
+            NavigationItem("Profile", Icons.Default.Person, "profile")
+        )
+
+        navItems.forEach { item ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label,
+                        tint = if (currentRoute == item.route) Color(0xFF398E3D) else Color.LightGray // Explicitly set tint
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.label,
+                        color = if (currentRoute == item.route) Color(0xFF388E3C) else Color.LightGray // Explicitly set text color
+                    )
+                },
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF388E3C), // Fallback for selected icon
+                    selectedTextColor = Color(0xFF388E3C), // Fallback for selected text
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray
+                ),
+                alwaysShowLabel = true
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,6 +108,8 @@ fun FarmerTopBar() {
         )
     )
 }
+
+
 
 @Composable
 fun FarmerDashboardContent(
