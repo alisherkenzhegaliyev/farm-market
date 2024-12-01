@@ -16,9 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
+fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
     val messages by viewModel.messages.collectAsState()
     var messageText by remember { mutableStateOf(TextFieldValue("")) }
 

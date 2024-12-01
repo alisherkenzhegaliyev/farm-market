@@ -137,7 +137,7 @@ fun LoginScreen(
             is AuthorizationState.Success -> {
                 Text(
                     (uiState.value.loginState as AuthorizationState.Success).successMsg,
-                    color = Color(0xFF348639),
+                    color = Color(0xFF24652A),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )

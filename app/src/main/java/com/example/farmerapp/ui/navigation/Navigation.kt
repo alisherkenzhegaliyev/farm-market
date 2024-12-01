@@ -1,11 +1,15 @@
 package com.example.farmerapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.farmerapp.data.preferences.SessionManager
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 import com.example.farmerapp.ui.buyer.BuyerHomeScreen
 import com.example.farmerapp.ui.buyer.BuyerInterfaceScreen
 import com.example.farmerapp.ui.farmer.AddProductScreen
@@ -16,16 +20,19 @@ import com.example.farmerapp.ui.screens.LoginScreen
 import com.example.farmerapp.ui.screens.RegistrationScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "farmer_dashboard") {
+    val currentRoute = viewModel.currentRoute.collectAsState().value.name
+
+
+    NavHost(navController = navController, startDestination = currentRoute) {
         // Login Screen
         composable(route = "login") {
             LoginScreen(
                 onNavigateToRegister = { navController.navigate("register") },
                 onNavigateToFarmerDashboard = { navController.navigate("farmer_dashboard") },
-                onNavigateToBuyerDashboard = { navController.navigate("buyer_interface") } // Include buyer dashboard
+                onNavigateToBuyerDashboard = { navController.navigate("buyer_home") } // Include buyer dashboard
             )
         }
         // Registration Screen

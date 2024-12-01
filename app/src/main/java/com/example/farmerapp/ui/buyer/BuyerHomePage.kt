@@ -2,7 +2,7 @@ package com.example.farmerapp.ui.buyer
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -45,7 +45,7 @@ fun BottomNavigationBar(navController: NavController) {
     ) {
         val navItems = listOf(
             NavigationItem("Home", Icons.Default.Home, "home"),
-            NavigationItem("Chat", Icons.Default.Chat, "chat"),
+            NavigationItem("Chat", Icons.AutoMirrored.Filled.Chat, "chat"),
             NavigationItem("Cart", Icons.Default.ShoppingCart, "cart"),
             NavigationItem("Profile", Icons.Default.Person, "profile")
         )

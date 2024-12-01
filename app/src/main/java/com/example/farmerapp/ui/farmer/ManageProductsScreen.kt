@@ -1,5 +1,7 @@
 package com.example.farmerapp.ui.farmer
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,16 +14,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageProductsScreen(
     onBack: () -> Unit,
-    onEditScreen: (Int) -> Unit
+    onEditScreen: (Int  ) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
@@ -86,53 +91,90 @@ fun ManageProductsScreen(
 fun ManageProductsContent(
     modifier: Modifier = Modifier,
     onEditScreen: (Int) -> Unit,
-    onProductClick: (Int) -> Unit
+    onProductClick: (Int) -> Unit,
+    viewModel: ManageProductViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
 ) {
     // Dynamic Product List
-    var products by remember { mutableStateOf(listOf("Tomatoes", "Apples", "Carrots")) }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        items(products.size) { index ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val products = uiState.productList
+
+    if(uiState.manageState is ManageState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+    } else {
+        if(uiState.manageState is ManageState.Success) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                // Product Name
-                Text(
-                    text = products[index],
-                    fontSize = 16.sp,
-                    modifier = Modifier.clickable { onProductClick(index) }
-                )
+                Toast.makeText(context, (uiState.manageState as ManageState.Success).successMsg, Toast.LENGTH_SHORT).show()
+            }
+        }
 
-                // Action Buttons (Edit and Delete)
+        if (products.isEmpty() && uiState.manageState is ManageState.Success) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("This user doesn't have any products")
+            }
+
+        }
+
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            items(products.size) { index ->
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    ClickableText(
-                        text = AnnotatedString("Edit"),
-                        onClick = { onEditScreen(index) }
+                    // Product Name
+                    Text(
+                        text = products[index].name,
+                        fontSize = 16.sp,
+                        modifier = Modifier.clickable { onProductClick(index) }
                     )
 
-                    IconButton(onClick = {
-                        // Delete product from the list
-                        products = products.toMutableList().apply { removeAt(index) }
-                    }) {
-                        Icon(
-                            Icons.Filled.DeleteOutline,
-                            contentDescription = "Delete",
-                            tint = Color.Black
+                    // Action Buttons (Edit and Delete)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ClickableText(
+                            text = AnnotatedString("Edit"),
+                            onClick = { onEditScreen(products[index].productID) }
                         )
+
+                        IconButton(onClick = {
+                            viewModel.deleteProduct(products[index].productID)
+
+                        }) {
+                            Icon(
+                                Icons.Filled.DeleteOutline,
+                                contentDescription = "Delete",
+                                tint = Color.Black
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
+
+
 }

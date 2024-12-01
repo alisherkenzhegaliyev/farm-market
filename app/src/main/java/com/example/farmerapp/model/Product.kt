@@ -3,13 +3,38 @@ package com.example.farmerapp.model
 import com.google.gson.annotations.SerializedName
 
 
+data class Cart(
+    val productId: Int,
+    val buyerId: Int,
+    val quantity: Int,
+    val farmerId: Int,
+    val status: String,
+    val price: Float,
+    val totalPrice: Float = quantity.toFloat() * price
+
+)
+
+data class Id(
+    @SerializedName("id") val id: Int
+)
+
+data class AddUpdateRequest(
+    @SerializedName("name") val name: String,
+    @SerializedName("price") val price: Float,
+    @SerializedName("quantity") val quantity: Int,
+    @SerializedName("id") val id: Int? = null,
+    @SerializedName("image") val image: String? = null,
+    @SerializedName("farmer_id") val farmerID: Int? = null,
+)
+
+
 data class Product(
-    val productID: String,
-    val farmID: String,
+    @SerializedName("productid") val productID: Int = -1,
     val name: String,
     val price: String,
     val quantity: String,
-    val farmerID: String
+    @SerializedName("farmer_id") val farmerID: Int = -1,
+    val image: String? = null ,
 )
 
 

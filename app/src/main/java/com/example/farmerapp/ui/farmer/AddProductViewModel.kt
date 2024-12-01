@@ -5,29 +5,29 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
+import com.example.farmerapp.data.preferences.SessionManager
+import com.example.farmerapp.model.AddUpdateRequest
+import com.example.farmerapp.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-data class Product(
-    val name: String,
-    val category: String,
-    val price: Double,
-    val quantity: Int,
-    val description: String
-)
 
 data class AddProductUiState(
     val name: String = "",
-    val category: String = "",
     val price: String = "",
     val quantity: String = "",
-    val description: String = "",
-    val isSaved: Boolean = false
+    val farmerId: Int = -1,
+    val isSaved: Boolean = false,
+    val isLoading: Boolean = false,
+    val savePressed: Boolean = false,
 )
 
 class AddProductViewModel(
-    private val farmerMarketRepository: FarmerMarketRepository
+    private val farmerMarketRepository: FarmerMarketRepository,
+    sessionManager: SessionManager
 ) : ViewModel() {
+
+    val farmerID = sessionManager.getUserId()
 
     private val _uiState = MutableStateFlow(AddProductUiState())
     val uiState = _uiState
@@ -35,10 +35,6 @@ class AddProductViewModel(
     // Update methods for each field
     fun updateName(newName: String) {
         _uiState.value = _uiState.value.copy(name = newName)
-    }
-
-    fun updateCategory(newCategory: String) {
-        _uiState.value = _uiState.value.copy(category = newCategory)
     }
 
     fun updatePrice(newPrice: String) {
@@ -49,23 +45,26 @@ class AddProductViewModel(
         _uiState.value = _uiState.value.copy(quantity = newQuantity)
     }
 
-    fun updateDescription(newDescription: String) {
-        _uiState.value = _uiState.value.copy(description = newDescription)
+    fun addProduct() {
+        _uiState.value = _uiState.value.copy(isLoading = true, savePressed = true)
+        viewModelScope.launch {
+            try {
+                val response = farmerMarketRepository.addProduct(
+                    AddUpdateRequest(
+                        name = _uiState.value.name,
+                        price = _uiState.value.price.toFloat(),
+                        quantity = _uiState.value.quantity.toInt(),
+                        farmerID = farmerID.toInt(),
+                    )
+                )
+                if (response.isSuccessful) {
+                    _uiState.value = _uiState.value.copy(isSaved = true, isLoading = false)
+                } else {
+                    _uiState.value = _uiState.value.copy(isSaved = false, isLoading = false)
+                }
+            } catch (e : Exception) {
+                _uiState.value = _uiState.value.copy(isSaved = false, isLoading = false)
+            }
+        }
     }
-
-    // Save Product Logic
-//    fun saveProduct() {
-//        viewModelScope.launch {
-//            val product = Product(
-//                name = name.value,
-//                category = category.value,
-//                price = price.value.toDoubleOrNull() ?: 0.0,
-//                quantity = quantity.value.toIntOrNull() ?: 0,
-//                description = description.value
-//            )
-//            // Logic to save the product (e.g., database, network call)
-//            println("Product saved: $product")
-//            isSaved.value = true
-//        }
-//    }
 }

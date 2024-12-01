@@ -2,6 +2,7 @@ package com.example.farmerapp.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.preferences.core.preferencesOf
 
 class SessionManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
@@ -22,8 +23,12 @@ class SessionManager(context: Context) {
         }
     }
 
-    fun getUserId(): String? {
-        return sharedPreferences.getString(KEY_USER_ID, null)
+    fun isActive(): Boolean {
+        return sharedPreferences.getString(KEY_USER_ID, null).isNullOrEmpty().not()
+    }
+
+    fun getUserId(): String {
+        return sharedPreferences.getString(KEY_USER_ID, null) ?: "-1"
     }
 
     fun getUserType(): String? {

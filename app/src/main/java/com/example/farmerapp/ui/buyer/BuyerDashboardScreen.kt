@@ -18,7 +18,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.farmerapp.model.Product
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 
 // Define soothing green colors for the app
 val LightGreen = Color(0xFFE8F5E9)
@@ -27,7 +30,9 @@ val DarkGreen = Color(0xFF388E3C)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BuyerInterfaceScreen() {
+fun BuyerInterfaceScreen(
+    viewModel: BuyerDashboardViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
+) {
     // States for filters, search, price slider, category, and location
     var searchQuery by remember { mutableStateOf("") }
     var selectedCategories by remember { mutableStateOf(setOf<String>()) }
@@ -39,55 +44,59 @@ fun BuyerInterfaceScreen() {
     var isLocationDropdownExpanded by remember { mutableStateOf(false) }
 
     // Category and location options
+
+
     val categories = listOf("Vegetables", "Fruits", "Seeds")
     val locations = listOf("All Locations", "Orchard Farm", "Green Valley", "Seed World", "Tropical Farms", "Harvest Heaven")
 
 
     val orderOptions = listOf("Low to High", "High to Low")
     // Product data
-    val allProducts = listOf(
-        Product(
-            name = "Fresh Apples",
-            price = 2.99f,
-            category = "Fruits",
-            location = "Orchard Farm",
-            quantity = 25,
-            imageUrl = "https://images.unsplash.com/photo-1512578659172-63a4634c05ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            createdAt = System.currentTimeMillis() // Mark as newly added
-        ),
-        Product(
-            name = "Organic Carrots",
-            price = 1.49f,
-            category = "Vegetables",
-            location = "Green Valley",
-            quantity = 40,
-            imageUrl = "https://images.unsplash.com/photo-1447175008436-054170c2e979?q=80&w=1899&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            createdAt = System.currentTimeMillis() - (8 * 24 * 60 * 60 * 1000) // Added 8 days ago
-        ),
-        Product(
-            name = "Tomato Seeds",
-            price = 4.99f,
-            category = "Seeds",
-            location = "Seed World",
-            quantity = 15,
-            imageUrl = "https://images.unsplash.com/photo-1631262909868-d6f6ed8fbe7c?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            createdAt = System.currentTimeMillis() - (1 * 24 * 60 * 60 * 1000) // Added 1 day ago
-        )
-    )
+//    val allProducts = listOf(
+//        Product(
+//            name = "Fresh Apples",
+//            price = 2.99f,
+//            category = "Fruits",
+//            location = "Orchard Farm",
+//            quantity = 25,
+//            imageUrl = "https://images.unsplash.com/photo-1512578659172-63a4634c05ec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//            createdAt = System.currentTimeMillis() // Mark as newly added
+//        ),
+//        Product(
+//            name = "Organic Carrots",
+//            price = 1.49f,
+//            category = "Vegetables",
+//            location = "Green Valley",
+//            quantity = 40,
+//            imageUrl = "https://images.unsplash.com/photo-1447175008436-054170c2e979?q=80&w=1899&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//            createdAt = System.currentTimeMillis() - (8 * 24 * 60 * 60 * 1000) // Added 8 days ago
+//        ),
+//        Product(
+//            name = "Tomato Seeds",
+//            price = 4.99f,
+//            category = "Seeds",
+//            location = "Seed World",
+//            quantity = 15,
+//            imageUrl = "https://images.unsplash.com/photo-1631262909868-d6f6ed8fbe7c?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+//            createdAt = System.currentTimeMillis() - (1 * 24 * 60 * 60 * 1000) // Added 1 day ago
+//        )
+//    )
+
+    val uiState = viewModel.uiState.collectAsState()
+    val allProducts = uiState.value.productList
 
     // Filtered Products Based on Search, Price, Category, and Location
     val filteredProducts = allProducts
         .filter {
-            it.name.contains(searchQuery, ignoreCase = true) &&
-                    (selectedCategories.isEmpty() || selectedCategories.contains(it.category)) &&
-                    it.price in priceRangeStart..priceRangeEnd &&
-                    (selectedLocation == "All Locations" || it.location == selectedLocation)
+            it.pr.name.contains(searchQuery, ignoreCase = true) &&
+//                    (selectedCategories.isEmpty() || selectedCategories.contains(it.category)) &&
+                    it.pr.price.toFloat() in priceRangeStart..priceRangeEnd
+//                    && (selectedLocation == "All Locations" || it.location == selectedLocation)
         }
         .let { products ->
             when (sortOrder) {
-                "Newest Listings" -> products.sortedByDescending { it.createdAt }
-                "Low to High" -> products.sortedBy { it.price }
-                "High to Low" -> products.sortedByDescending { it.price }
+                "Low to High" -> products.sortedBy { it.pr.price.toFloat() }
+                "High to Low" -> products.sortedByDescending { it.pr.price.toFloat() }
                 else -> products
             }
         }
@@ -110,24 +119,23 @@ fun BuyerInterfaceScreen() {
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.White)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Collapsible Category Filter with Checkboxes
-        CategoryFilterDropdown(
-            categories = categories,
-            selectedCategories = selectedCategories,
-            onCategorySelectionChange = { selectedCategories = it }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
 //        Spacer(modifier = Modifier.height(8.dp))
 
-        // Collapsible Location Filter
-        LocationFilterDropdown(
-            locations = locations,
-            selectedLocation = selectedLocation,
-            onLocationSelectionChange = { selectedLocation = it }
-        )
+        // Collapsible Category Filter with Checkboxes
+//        CategoryFilterDropdown(
+//            categories = categories,
+//            selectedCategories = selectedCategories,
+//            onCategorySelectionChange = { selectedCategories = it }
+//        )
+
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        // Collapsible Location Filter
+//        LocationFilterDropdown(
+//            locations = locations,
+//            selectedLocation = selectedLocation,
+//            onLocationSelectionChange = { selectedLocation = it }
+//        )
         Spacer(modifier = Modifier.height(8.dp))
         PriceRangeSlider(
             priceRangeStart = priceRangeStart,
@@ -157,9 +165,9 @@ fun BuyerInterfaceScreen() {
 }
 
 @Composable
-fun ProductCard(product: Product) {
+fun ProductCard(product: ProductWithCounter) {
     val now = System.currentTimeMillis()
-    val isNew = product.createdAt >= now - (7 * 24 * 60 * 60 * 1000) // New if within 7 days
+    val isNew = true // New if within 7 days
 
     Card(
         modifier = Modifier
@@ -176,15 +184,17 @@ fun ProductCard(product: Product) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Product Image
-            Image(
-                painter = rememberAsyncImagePainter(model = product.imageUrl),
-                contentDescription = "Product Image",
-                modifier = Modifier
-                    .size(80.dp)
-                    .padding(end = 16.dp),
-                contentScale = ContentScale.Crop
-            )
-
+            val checkProductLength = product.pr.image?.length ?: 0
+            if(checkProductLength > 10) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = product.pr.image),
+                    contentDescription = "Product Image",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(end = 16.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
             // Product Details
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -195,7 +205,7 @@ fun ProductCard(product: Product) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = product.name,
+                        text = product.pr.name,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
@@ -211,17 +221,18 @@ fun ProductCard(product: Product) {
                     }
                 }
                 Text(
-                    text = "\$${product.price}",
+                    text = "\$${product.pr.price}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = GrassGreen)
                 )
                 Text(
-                    text = "Available: ${product.quantity} kg",
+                    text = "Available: ${product.pr.quantity}",
                     style = MaterialTheme.typography.bodyMedium.copy(color = DarkGreen)
                 )
-                Text(
-                    text = product.location,
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
-                )
+//                Text(
+//                    text = product.location,
+//                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
+//                )
+
             }
         }
     }
@@ -231,7 +242,8 @@ fun SortOrderDropdown(
     sortOrder: String,
     onSortOrderChange: (String) -> Unit
 ) {
-    val sortOptions = listOf("Newest Listings", "Low to High", "High to Low")
+//    val sortOptions = listOf("Newest Listings", "Low to High", "High to Low")
+    val sortOptions = listOf("Low to High", "High to Low")
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -401,12 +413,3 @@ fun LocationFilterDropdown(
     }
 }
 
-data class Product(
-    val name: String,
-    val price: Float,
-    val category: String,
-    val location: String,
-    val quantity: Int,
-    val imageUrl: String,
-    val createdAt: Long // Timestamp for newest listings
-)

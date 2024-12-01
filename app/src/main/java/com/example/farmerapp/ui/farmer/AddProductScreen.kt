@@ -5,7 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,15 +33,20 @@ fun AddProductScreen(
             )
         },
         content = { padding ->
-            AddProductContent(
-                modifier = Modifier.padding(padding),
-                uiState = uiState,
-                onNameChange = viewModel::updateName,
-                onCategoryChange = viewModel::updateCategory,
-                onPriceChange = viewModel::updatePrice,
-                onQuantityChange = viewModel::updateQuantity,
-                onDescriptionChange = viewModel::updateDescription
-            )
+            if(uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                AddProductContent(
+                    modifier = Modifier.padding(padding),
+                    uiState = uiState,
+                    onNameChange = viewModel::updateName,
+                    onPriceChange = viewModel::updatePrice,
+                    onQuantityChange = viewModel::updateQuantity,
+                    onSave = viewModel::addProduct
+                )
+            }
         }
     )
 }
@@ -49,16 +56,16 @@ fun AddProductContent(
     modifier: Modifier = Modifier,
     uiState: AddProductUiState,
     onNameChange: (String) -> Unit,
-    onCategoryChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
+    onSave: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
             value = uiState.name,
@@ -66,38 +73,36 @@ fun AddProductContent(
             label = { Text("Product Name") },
             modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = uiState.category,
-            onValueChange = onCategoryChange,
-            label = { Text("Category") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = uiState.price,
             onValueChange = onPriceChange,
             label = { Text("Price") },
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = uiState.quantity,
             onValueChange = onQuantityChange,
             label = { Text("Quantity") },
             modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = uiState.description,
-            onValueChange = onDescriptionChange,
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
-            onClick = {},
+            onClick = onSave,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save Product")
         }
-        if (uiState.isSaved) {
-            Text("Product saved successfully!", color = MaterialTheme.colorScheme.primary)
+        Spacer(modifier = Modifier.height(16.dp))
+        if(uiState.isSaved) {
+            Text("Product saved successfully!", color = Color(0xFF24652A))
+        } else {
+
+            if(uiState.savePressed) { Text("Product not saved!", color = Color.Red) }
         }
     }
 }
