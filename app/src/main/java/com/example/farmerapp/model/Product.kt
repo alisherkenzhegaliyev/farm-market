@@ -3,11 +3,12 @@ package com.example.farmerapp.model
 import com.google.gson.annotations.SerializedName
 
 data class Message(
-    val chatid: Int,
+    val chatid: Int?,
 //    val senderId: Int,
-    val sendertype: String,
-    val messagetext: String,
-    val sentat: String
+    val sendertype: String?,
+    val messagetext: String?,
+    val sentat: String?,
+    val error: String?
 )
 
 data class Chat(

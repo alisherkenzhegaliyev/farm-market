@@ -29,6 +29,7 @@ class ChatListingViewModel(
 
         viewModelScope.launch {
             try {
+                Log.i("ChatListingViewModel", "${userId.toInt()} | ${userType!!}")
                 val response = farmerMarketRepository.getUserChats(userId.toInt(), userType!!)
                 _uiState.value= _uiState.value.copy(
                     chatList = response.map {

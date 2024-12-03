@@ -44,6 +44,7 @@ class ChatViewModel(
                              )
                          }
                     }
+
                     else {
                         _messages.update {
                             it.copy(
@@ -73,7 +74,8 @@ class ChatViewModel(
                     chatid = chatId,
                     sendertype = senderType!!,
                     messagetext = message,
-                    sentat = System.currentTimeMillis().toString()
+                    sentat = System.currentTimeMillis().toString(),
+                    error = null
                 ))
                 _messages.update { it.copy(requestState = RequestState.Success("Message sent")) }
                 fetchMessages()

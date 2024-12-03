@@ -104,7 +104,7 @@ fun ChatMessageItem(message: Message, userType: String) {
                 .padding(12.dp)
         ) {
             Text(
-                text = message.messagetext,
+                text = message.messagetext ?: "",
                 color = if (message.sendertype == userType) Color.White else Color.Black
             )
         }
