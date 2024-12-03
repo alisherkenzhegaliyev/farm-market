@@ -17,6 +17,15 @@ class LoginViewModel(
 
     var uiState = _uiState
 
+    fun setLoginInitial() {
+        _uiState.value = _uiState.value.copy(
+            chosenRole = _uiState.value.chosenRole,
+            emailEntry = "",
+            passwordEntry = "",
+            passwordVisible = false,
+            loginState = AuthorizationState.Idle
+        )
+    }
 
     fun updateEmailField(entry: String) {
         _uiState.value = _uiState.value.copy(emailEntry = entry)
@@ -58,7 +67,7 @@ class LoginViewModel(
 
                     val userId = response.body()?.message ?: "-1"
                     val userName = response.body()?.name ?: "unknown"
-
+                    Log.i("LoginViewModel", "session manager with values $userId $userName ${_uiState.value.chosenRole.name}")
 
                     sessionManager.saveUserDetail(
                         userId = userId,

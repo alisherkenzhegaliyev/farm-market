@@ -1,5 +1,6 @@
-package com.example.farmerapp.ui.buyer
+package com.example.farmerapp.ui.General
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -14,15 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.model.Message
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
+fun ChatScreen(
+    viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory),
+    onBack: () -> Unit
+) {
     val messages by viewModel.messages.collectAsState()
-    var messageText by remember { mutableStateOf(TextFieldValue("")) }
+    val userType = viewModel.senderType!!.lowercase()
 
     Column(
         modifier = Modifier
@@ -34,8 +40,8 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewMo
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            items(messages) { message ->
-                ChatMessageItem(message = message)
+            items(messages.messages) { message ->
+                ChatMessageItem(message = message, userType = userType!!)
             }
         }
 
@@ -48,15 +54,15 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewMo
             verticalAlignment = Alignment.CenterVertically
         ) {
             BasicTextField(
-                value = messageText,
-                onValueChange = { messageText = it },
+                value = messages.currentEntry,
+                onValueChange = viewModel::updateEntry,
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp),
                 singleLine = true,
                 decorationBox = { innerTextField ->
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        if (messageText.text.isEmpty()) {
+                        if (messages.currentEntry.isEmpty()) {
                             Text("Type a message...", color = Color.Gray)
                         }
                         innerTextField()
@@ -66,15 +72,11 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewMo
 
             IconButton(
                 onClick = {
-                    if (messageText.text.isNotEmpty()) {
+                    if (messages.currentEntry.isNotEmpty()) {
                         viewModel.sendMessage(
-                            Message(
-                                senderId = "Buyer",
-                                content = messageText.text,
-                                timestamp = System.currentTimeMillis()
-                            )
+                            messages.currentEntry
                         )
-                        messageText = TextFieldValue("") // Clear the input
+                    viewModel.updateEntry("")// Clear the input
                     }
                 }
             ) {
@@ -85,24 +87,25 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = FarmerMarketViewMo
 }
 
 @Composable
-fun ChatMessageItem(message: Message) {
+fun ChatMessageItem(message: Message, userType: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = if (message.senderId == "Buyer") Arrangement.End else Arrangement.Start
+        horizontalArrangement = if (message.sendertype == userType) Arrangement.End else Arrangement.Start
     ) {
+        Log.i("ChatMessageItem", "Message: ${message.sendertype}, $userType")
         Box(
             modifier = Modifier
                 .background(
-                    if (message.senderId == "Buyer") Color(0xff5068F2) else Color(0xFFFFFFFF),
+                    if (message.sendertype == userType) Color(0xff5068F2) else Color(0xFFFFFFFF),
                     shape = RoundedCornerShape(32.dp)
                 )
                 .padding(12.dp)
         ) {
             Text(
-                text = message.content,
-                color = if (message.senderId == "Buyer") Color.White else Color.Black
+                text = message.messagetext,
+                color = if (message.sendertype == userType) Color.White else Color.Black
             )
         }
     }
@@ -111,5 +114,5 @@ fun ChatMessageItem(message: Message) {
 @Preview
 @Composable
 fun ChatScreenPreview() {
-    ChatScreen()
+    ChatScreen(onBack = {})
 }

@@ -6,9 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.farmerapp.FarmerMarketApplication
+import com.example.farmerapp.ui.General.ChatListingViewModel
 import com.example.farmerapp.ui.buyer.BuyerDashboardViewModel
 import com.example.farmerapp.ui.buyer.CartScreenViewModel
-import com.example.farmerapp.ui.buyer.ChatViewModel
+import com.example.farmerapp.ui.General.ChatViewModel
 import com.example.farmerapp.ui.General.ProfileViewModel
 import com.example.farmerapp.ui.farmer.AddProductViewModel
 import com.example.farmerapp.ui.farmer.EditScreenViewModel
@@ -61,12 +62,6 @@ object FarmerMarketViewModelProvider {
         }
 
         initializer {
-            ChatViewModel(
-                farmerMarketApplication().container.farmerMarketRepository
-            )
-        }
-
-        initializer {
             ProfileViewModel(
                 farmerMarketApplication().sessionManager
             )
@@ -80,6 +75,21 @@ object FarmerMarketViewModelProvider {
         }
         initializer {
             CartScreenViewModel(
+                farmerMarketApplication().container.farmerMarketRepository,
+                farmerMarketApplication().sessionManager
+            )
+        }
+
+        initializer {
+            ChatViewModel(
+                farmerMarketApplication().container.farmerMarketRepository,
+                this.createSavedStateHandle(),
+                farmerMarketApplication().sessionManager
+            )
+        }
+
+        initializer {
+            ChatListingViewModel(
                 farmerMarketApplication().container.farmerMarketRepository,
                 farmerMarketApplication().sessionManager
             )

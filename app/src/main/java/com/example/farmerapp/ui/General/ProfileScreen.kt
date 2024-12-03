@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,28 +19,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory),
+    onBack: () -> Unit,
+    navigateToLogin: () -> Unit,
+) {
     val profile = viewModel.profile.collectAsState().value
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5)), // Light background
-        contentAlignment = Alignment.Center
-    ) {
-        if (profile == null) {
-            CircularProgressIndicator() // Loading indicator while data is fetched
-        } else {
-            ProfileContent(profile = profile)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Profile") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        content = { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color(0xFFF5F5F5)), // Light background
+                contentAlignment = Alignment.Center
+            ) {
+                if (profile == null) {
+                    CircularProgressIndicator() // Loading indicator while data is fetched
+                } else {
+                    ProfileContent(profile = profile, navigateToLogin, viewModel::logOut)
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
-fun ProfileContent(profile: Profile) {
+fun ProfileContent(profile: Profile, navigateToLogin: () -> Unit, logOut: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,22 +101,29 @@ fun ProfileContent(profile: Profile) {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Options List
-        ProfileOptionsList(profile = profile)
+        ProfileOptionsList(
+            profile = profile,
+            onLogout = {
+                logOut()
+                navigateToLogin()
+        })
     }
 }
 
 @Composable
-fun ProfileOptionsList(profile: Profile) {
+fun ProfileOptionsList(profile: Profile, onLogout: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+    ) {
         ProfileOption(title = "Language", value = profile.language)
         ProfileOption(title = "App Version", value = profile.appVersion)
         ProfileOption(title = "Invoices", value = "View Invoices")
         ProfileOption(title = "Help", value = "Contact Support")
+        Button(onClick = { onLogout() }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Log Out") }
     }
 }
+
 
 @Composable
 fun ProfileOption(title: String, value: String) {
@@ -118,3 +148,4 @@ fun ProfileOption(title: String, value: String) {
         )
     }
 }
+

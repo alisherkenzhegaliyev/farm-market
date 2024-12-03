@@ -50,8 +50,8 @@ fun FarmerBottomBar(navController: NavController) {
         tonalElevation = 4.dp // Elevation effect
     ) {
         val navItems = listOf(
-            NavigationItem("Home", Icons.Default.Home, "home"),
-            NavigationItem("Chat", Icons.Filled.Chat, "chat"),
+            NavigationItem("Home", Icons.Default.Home, "farmer_dashboard"),
+            NavigationItem("Chats", Icons.Filled.Chat, "chat_listing"),
             NavigationItem("Profile", Icons.Default.Person, "profile")
         )
 
@@ -73,11 +73,7 @@ fun FarmerBottomBar(navController: NavController) {
                 selected = currentRoute == item.route,
                 onClick = {
                     if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        navController.navigate(item.route)
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(

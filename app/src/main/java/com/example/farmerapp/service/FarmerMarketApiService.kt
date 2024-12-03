@@ -2,8 +2,10 @@ package com.example.farmerapp.service
 
 import com.example.farmerapp.model.AddUpdateRequest
 import com.example.farmerapp.model.Cart
+import com.example.farmerapp.model.Chat
 import com.example.farmerapp.model.Id
 import com.example.farmerapp.model.LoginRequest
+import com.example.farmerapp.model.Message
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RegistrationRequest
@@ -36,21 +38,32 @@ interface FarmerMarketApiService {
     suspend fun getProduct(@Path("id") id: Int): Product
 
     @GET("/api/products/")
-    fun getAllProducts(): List<Product>
+    suspend fun getAllProducts(): List<Product>
 
-    @POST("/api/product/add/cart")
+    @POST("/api/product/add/cart/")
     suspend fun addToCart(@Body cartItem: Cart): Response<RequestResponse>
 
-    @GET("/api/product/cart/{buyerid}")
+    @GET("/api/product/cart/{buyerid}/")
     suspend fun getCartItems(@Path("buyerid") buyerId: Int): List<Cart>
 
-    @GET("/api/buyer/chats/{buyerId}")
-    suspend fun getBuyerChats(@Path("buyerId") buyerId: Int): List<Chat>
+    @GET("/api/buyer/chats/{userId}/{usertype}/")
+    suspend fun getUserChats(@Path("userId") userId: Int, @Path("usertype") userType: String): List<Chat>
 
-    @GET("/api/farmer/chats/{farmerId}")
-    suspend fun getFarmerChats(@Path("farmerId") farmerId: Int): List<Chat>
+    @POST("/api/send/message/")
+    suspend fun sendMessage(@Body message: Message): Response<RequestResponse>
 
-    @POST
+    @POST("/api/send/chat/")
+    suspend fun sendChat(@Body chat: Chat): Response<RequestResponse>
+
+    @GET("/api/chat/{chatId}/messages/")
+    suspend fun getChatMessages(@Path("chatId") chatId: Int): List<Message>
+
+    @GET("/api/farmer/name/{id}/")
+    suspend fun getFarmerName(@Path("id") id: Int): RequestResponse
+
+    @GET("/api/buyer/name/{id}/")
+    suspend fun getBuyerName(@Path("id") id: Int): RequestResponse
+
 }
 
 

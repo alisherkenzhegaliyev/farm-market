@@ -3,8 +3,10 @@ package com.example.farmerapp.data
 import android.util.Log
 import com.example.farmerapp.model.AddUpdateRequest
 import com.example.farmerapp.model.Cart
+import com.example.farmerapp.model.Chat
 import com.example.farmerapp.model.Id
 import com.example.farmerapp.model.LoginRequest
+import com.example.farmerapp.model.Message
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.RegistrationRequest
@@ -56,6 +58,18 @@ interface FarmerMarketRepository {
     suspend fun addToCart(cartItem: Cart): Response<RequestResponse>
 
     suspend fun getCartItems(buyerId: Int): List<Cart>
+
+    suspend fun getUserChats(userId: Int, userType: String): List<Chat>
+
+    suspend fun getChatMessages(chatId: Int): List<Message>
+
+    suspend fun getFarmerName(id: Int): RequestResponse
+
+    suspend fun getBuyerName(id: Int): RequestResponse
+
+    suspend fun sendMessage(message: Message): Response<RequestResponse>
+
+    suspend fun sendChat(chat: Chat): Response<RequestResponse>
 }
 
 class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMarketApiService) : FarmerMarketRepository {
@@ -142,18 +156,48 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
 
     override fun getAllProducts(): Flow<List<Product>> {
         return flow {
-            Log.i("getproducts", "in get products")
-            emit(farmerMarketApiService.getAllProducts())
+            while(true) {
+                Log.i("getproducts", "in get products")
+                emit(farmerMarketApiService.getAllProducts())
+                delay(5000L)
+            }
         }
     }
 
     override suspend fun addToCart(cartItem: Cart): Response<RequestResponse> {
+        Log.i("addToCart", "in add to cart with cartItem: $cartItem")
         return farmerMarketApiService.addToCart(cartItem)
     }
 
     override suspend fun getCartItems(buyerId: Int): List<Cart> {
         return farmerMarketApiService.getCartItems(buyerId)
     }
+
+    override suspend fun getUserChats(userId: Int, userType: String): List<Chat> {
+        return farmerMarketApiService.getUserChats(userId, userType)
+    }
+
+    override suspend fun getChatMessages(chatId: Int): List<Message> {
+        return (farmerMarketApiService.getChatMessages(chatId))
+    }
+
+    override suspend fun sendMessage(message: Message): Response<RequestResponse> {
+        return farmerMarketApiService.sendMessage(message)
+    }
+
+    override suspend fun sendChat(chat: Chat): Response<RequestResponse> {
+        return farmerMarketApiService.sendChat(chat)
+    }
+
+    override suspend fun getFarmerName(id: Int): RequestResponse {
+        return farmerMarketApiService.getFarmerName(id)
+    }
+
+    override suspend fun getBuyerName(id: Int): RequestResponse {
+        return farmerMarketApiService.getBuyerName(id)
+    }
+
+
 
 }
 

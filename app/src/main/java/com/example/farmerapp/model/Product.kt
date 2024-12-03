@@ -2,12 +2,26 @@ package com.example.farmerapp.model
 
 import com.google.gson.annotations.SerializedName
 
+data class Message(
+    val chatid: Int,
+//    val senderId: Int,
+    val sendertype: String,
+    val messagetext: String,
+    val sentat: String
+)
+
+data class Chat(
+    val chatid: Int,
+    val buyerid: Int,
+    val farmerid: Int,
+    val status: String
+)
 
 data class Cart(
-    val productId: Int,
-    val buyerId: Int,
+    val productid: Int,
+    val buyerid: Int,
     val quantity: Int,
-    val farmerId: Int,
+    val farmerid: Int,
     val status: String,
 )
 
@@ -30,7 +44,7 @@ data class Product(
     val name: String,
     val price: String,
     val quantity: String,
-    @SerializedName("farmer_id") val farmerID: Int = -1,
+    @SerializedName("farmerid") val farmerID: Int = -1,
     val image: String? = null ,
 )
 

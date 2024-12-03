@@ -29,15 +29,15 @@ class ProfileViewModel(
     }
 
     private fun fetchProfile() {
-        viewModelScope.launch {
-            delay(2000) // Simulate network delay
-            _profile.value = Profile(
-                name = sessionManager.getUserName() ?: "Not found",
-                username = "@chillguy",
-                profilePictureUrl = "https://preview.redd.it/chico-lachowski-damn-this-dude-is-handsome-personified-def-v0-rbyo3vm7rx0d1.jpg?width=385&format=pjpg&auto=webp&s=aec093236333846d396b5dd527af6ccec1da8cc4",
-                language = "English",
-                appVersion = "v1.0 -beta"
-            )
-        }
+        _profile.value = Profile(
+            name = sessionManager.getUserName() ?: "Not found",
+            username = "@chillguy",
+            profilePictureUrl = "https://preview.redd.it/chico-lachowski-damn-this-dude-is-handsome-personified-def-v0-rbyo3vm7rx0d1.jpg?width=385&format=pjpg&auto=webp&s=aec093236333846d396b5dd527af6ccec1da8cc4",
+            language = "English",
+            appVersion = "v1.0 -beta"
+        )
+    }
+    fun logOut() {
+        sessionManager.clearSession()
     }
 }

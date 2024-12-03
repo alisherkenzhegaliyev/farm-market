@@ -105,6 +105,7 @@ fun LoginScreen(
             onClick = {
                 viewModel.login()
                 if (uiState.value.loginState is AuthorizationState.Success) {
+                    viewModel.setLoginInitial()
                     if (uiState.value.chosenRole == Role.Farmer) {
                         onNavigateToFarmerDashboard()
                     } else {
@@ -116,7 +117,7 @@ fun LoginScreen(
             }, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
+            Text(text = if (uiState.value.loginState is AuthorizationState.Loading) "Loading..." else if(uiState.value.loginState is AuthorizationState.Success) "Enter app" else "Login")
         }
         Spacer(modifier = Modifier.height(8.dp))
 

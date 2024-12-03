@@ -1,21 +1,16 @@
 package com.example.farmerapp.ui.buyer
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
 import com.example.farmerapp.data.preferences.SessionManager
-import com.example.farmerapp.model.AddUpdateRequest
 import com.example.farmerapp.model.Cart
 import com.example.farmerapp.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class BuyerDashboardViewModel(
@@ -36,12 +31,11 @@ class BuyerDashboardViewModel(
 
     fun addToCart(pr: ProductWithCounter, counter : Int) {
         val toAdd = Cart(
-            productId = pr.pr.productID,
+            productid = pr.pr.productID,
             quantity = counter,
-            buyerId = sessionManager.getUserId().toInt(),
-            farmerId = pr.pr.farmerID,
+            buyerid = sessionManager.getUserId().toInt(),
+            farmerid = pr.pr.farmerID,
             status = "active",
-            price = pr.pr.price.toFloat()
         )
 
         viewModelScope.launch {

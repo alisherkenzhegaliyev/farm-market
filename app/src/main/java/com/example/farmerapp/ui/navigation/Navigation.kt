@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.navigation
 
+import CartScreen
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -9,21 +10,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.farmerapp.data.preferences.SessionManager
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import com.example.farmerapp.ui.General.ChatListScreen
+import com.example.farmerapp.ui.General.ChatScreen
+import com.example.farmerapp.ui.General.ProfileScreen
 import com.example.farmerapp.ui.buyer.BuyerHomeScreen
-import com.example.farmerapp.ui.buyer.BuyerInterfaceScreen
 import com.example.farmerapp.ui.farmer.AddProductScreen
+import com.example.farmerapp.ui.farmer.EditProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
 import com.example.farmerapp.ui.farmer.ManageProductsScreen
-import com.example.farmerapp.ui.farmer.EditProductScreen
 import com.example.farmerapp.ui.screens.LoginScreen
 import com.example.farmerapp.ui.screens.RegistrationScreen
 
 @Composable
 fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
     val navController = rememberNavController()
-
+    val currentUserType = viewModel.currentUserType
     val currentRoute = viewModel.currentRoute.collectAsState().value.name
 
 
@@ -53,7 +55,7 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
         // Add Buyer Home Screen with Bottom Navigation
         composable("buyer_home") {
             Log.i("BuyerHomeScreen", "BuyerHomeScreen")
-            BuyerInterfaceScreen() // Use your BuyerHomeScreen composable here
+            BuyerHomeScreen(navController) // Use your BuyerHomeScreen composable here
         }
 
 
@@ -69,11 +71,6 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
                 onEditScreen = { id ->
                     navController.navigate(route = "edit?id=$id")
                 }
-//                onDeleteProduct = { id ->
-//                    // Add your delete logic here
-//                    println("Delete product with id: $id")
-//                }
-
             )
         }
 
@@ -82,6 +79,40 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
             EditProductScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = "chat_listing",
+        ) {
+            val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
+            ChatListScreen(
+                onChatSelected = { id-> navController.navigate("chat?id=$id") },
+                onBack = { navController.navigate(toNavigate) },
+            )
+        }
+
+        composable(
+            route = "chat?id={id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
+            )
+        ) {
+            Log.i("ChatScreen", "ChatScreen from navigation with id: ${it.arguments?.getInt("id")}")
+            ChatScreen(onBack = { navController.navigate("chat_listing") } )
+        }
+
+        composable(
+            route = "profile"
+        ) {
+            val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
+            ProfileScreen(onBack = { navController.navigate(toNavigate) }, navigateToLogin = {
+                navController.popBackStack("login", inclusive = false)
+            })
+        }
+
+        composable("cart") {
+            val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
+            CartScreen(onBack = { navController.navigate(toNavigate) })
         }
 
     }

@@ -11,7 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.rememberAsyncImagePainter
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
@@ -31,9 +37,79 @@ val LightGreen = Color(0xFFE8F5E9)
 val GrassGreen = Color(0xFF81C784)
 val DarkGreen = Color(0xFF388E3C)
 
+
+@Composable
+fun BuyerHomeScreen(
+    navController: NavController // Pass NavController to FarmerDashboardScreen
+) {
+    Scaffold(
+        topBar = {  },
+        content = { padding ->
+            BuyerInterfaceScreen(
+                modifier = Modifier.padding(padding),
+            )
+        },
+        bottomBar = { BuyerBottomBar(navController = navController) } // Add BottomNavigationBar here
+    )
+}
+
+data class NavigationItem(val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val route: String)
+
+@Composable
+fun BuyerBottomBar(navController: NavController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+    Log.i("BuyerBottomBar", "Current Route: $currentRoute")
+    NavigationBar(
+        containerColor = Color.White, // Background color of the navigation bar
+        tonalElevation = 4.dp // Elevation effect
+    ) {
+        val navItems = listOf(
+            NavigationItem("Home", Icons.Default.Home, "buyer_home"),
+            NavigationItem("Chats", Icons.Filled.Chat, "chat_listing"),
+            NavigationItem("Profile", Icons.Default.Person, "profile"),
+            NavigationItem("Cart", Icons.Default.ShoppingCart, "cart")
+        )
+
+        navItems.forEach { item ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label,
+                        tint = if (currentRoute == item.route) Color(0xFF398E3D) else Color.LightGray // Explicitly set tint
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.label,
+                        color = if (currentRoute == item.route) Color(0xFF388E3C) else Color.LightGray // Explicitly set text color
+                    )
+                },
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route)
+                    }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF388E3C), // Fallback for selected icon
+                    selectedTextColor = Color(0xFF388E3C), // Fallback for selected text
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray
+                ),
+                alwaysShowLabel = true
+            )
+        }
+    }
+}
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuyerInterfaceScreen(
+    modifier: Modifier = Modifier,
     viewModel: BuyerDashboardViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
 ) {
 
@@ -88,7 +164,7 @@ fun BuyerInterfaceScreen(
 //    )
 
     val uiState = viewModel.uiState.collectAsState()
-    val allProducts = uiState.value.productList
+    val allProducts: List<ProductWithCounter> = uiState.value.productList
 
     Log.i("BuyerInterfaceScreen", "Products fetched, and they are: $allProducts")
 
@@ -107,6 +183,7 @@ fun BuyerInterfaceScreen(
                 else -> products
             }
         }
+    Log.i("BuyerInterfaceScreen", "Filtered products: $filteredProducts")
 
     // Main UI Column
     Column(
@@ -283,7 +360,9 @@ fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int
                     Button(
                         onClick = {
                             addToCart(product, counter)
+                            counter = 0
                         },
+                        enabled = counter > 0,
                         modifier = Modifier.padding(start = 8.dp)
                     ) {
                         Text("Add to Cart")

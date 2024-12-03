@@ -10,7 +10,7 @@ class NavigationViewModel(
 
     private val _currentRoute = MutableStateFlow(Screens.login)
     val currentRoute: MutableStateFlow<Screens> = _currentRoute
-
+    val currentUserType = sessionManager.getUserType()
     init {
         defineInitialRoute()
     }
