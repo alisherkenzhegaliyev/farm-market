@@ -15,6 +15,7 @@ import com.example.farmerapp.ui.General.ChatListScreen
 import com.example.farmerapp.ui.General.ChatScreen
 import com.example.farmerapp.ui.General.ProfileScreen
 import com.example.farmerapp.ui.buyer.BuyerHomeScreen
+import com.example.farmerapp.ui.buyer.OrderScreenUI
 import com.example.farmerapp.ui.farmer.AddProductScreen
 import com.example.farmerapp.ui.farmer.EditProductScreen
 import com.example.farmerapp.ui.farmer.FarmerDashboardScreen
@@ -26,7 +27,7 @@ import com.example.farmerapp.ui.screens.RegistrationScreen
 fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)) {
     val navController = rememberNavController()
     val currentUserType = viewModel.currentUserType
-    val currentRoute = viewModel.currentRoute.collectAsState().value.name
+    val currentRoute = viewModel.currentRoute.collectAsState().value.currentRoute.name
 
 
     NavHost(navController = navController, startDestination = "login") {
@@ -48,6 +49,7 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
             FarmerDashboardScreen(
                 onAddProduct = { navController.navigate(route = "add_product") },
                 onManageProducts = { navController.navigate(route = "manage_products") },
+                onOrder = { navController.navigate(route = "order") },
                 navController = navController
             )
         }
@@ -84,9 +86,11 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
         composable(
             route = "chat_listing",
         ) {
+            Log.i("HERE", "$currentUserType")
             val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
+
             ChatListScreen(
-                onChatSelected = { id-> navController.navigate("chat?id=$id") },
+                onChatSelected = { id -> navController.navigate("chat?id=$id") },
                 onBack = { navController.navigate(toNavigate) },
             )
         }
@@ -106,13 +110,18 @@ fun AppNavigation(viewModel: NavigationViewModel = viewModel(factory = FarmerMar
         ) {
             val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
             ProfileScreen(onBack = { navController.navigate(toNavigate) }, navigateToLogin = {
-                navController.popBackStack("login", inclusive = false)
+                navController.navigate("login")
             })
         }
 
         composable("cart") {
             val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
             CartScreen(onBack = { navController.navigate(toNavigate) })
+        }
+
+        composable("order") {
+            val toNavigate = if (currentUserType == "Farmer") "farmer_dashboard" else "buyer_home"
+            OrderScreenUI(onBackClick = { navController.navigate(toNavigate) })
         }
 
     }

@@ -101,7 +101,6 @@ fun AddProductContent(
         if(uiState.isSaved) {
             Text("Product saved successfully!", color = Color(0xFF24652A))
         } else {
-
             if(uiState.savePressed) { Text("Product not saved!", color = Color.Red) }
         }
     }

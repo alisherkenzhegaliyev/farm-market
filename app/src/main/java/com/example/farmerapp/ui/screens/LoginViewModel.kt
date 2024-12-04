@@ -44,50 +44,48 @@ class LoginViewModel(
         _uiState.value = _uiState.value.copy(chosenRole = role)
     }
 
-    fun login() {
+    suspend fun login() {
         val email = _uiState.value.emailEntry
         val password = _uiState.value.passwordEntry
         val role = _uiState.value.chosenRole.name
 
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loginState = AuthorizationState.Loading)
+        _uiState.value = _uiState.value.copy(loginState = AuthorizationState.Loading)
 
-            try {
-                val response = farmMarketRepository.login(
-                    email,
-                    password,
-                    role
+        try {
+            val response = farmMarketRepository.login(
+                email,
+                password,
+                role
+            )
+
+            if(response.isSuccessful) {
+                val successMsg = "Login Successful"
+                _uiState.value = _uiState.value.copy(
+                    loginState = AuthorizationState.Success(successMsg)
                 )
 
-                if(response.isSuccessful) {
-                    val successMsg = "Login Successful"
-                    _uiState.value = _uiState.value.copy(
-                        loginState = AuthorizationState.Success(successMsg)
-                    )
+                val userId = response.body()?.message ?: "-1"
+                val userName = response.body()?.name ?: "unknown"
+                Log.i("LoginViewModel", "session manager with values $userId $userName ${_uiState.value.chosenRole.name}")
 
-                    val userId = response.body()?.message ?: "-1"
-                    val userName = response.body()?.name ?: "unknown"
-                    Log.i("LoginViewModel", "session manager with values $userId $userName ${_uiState.value.chosenRole.name}")
-
-                    sessionManager.saveUserDetail(
-                        userId = userId,
-                        userType = _uiState.value.chosenRole.name,
-                        userName = userName
-                    )
+                sessionManager.saveUserDetail(
+                    userId = userId,
+                    userType = _uiState.value.chosenRole.name,
+                    userName = userName
+                )
 
 
-                } else  {
-                    val errorMsg = if(response.code() == 401) "Invalid Password" else if(response.code() == 404) "Given User does not exist" else "Unknown Error"
-                    Log.i("LoginViewModel", "In error")
-                    _uiState.value = _uiState.value.copy(
-                        loginState = AuthorizationState.Error(errorMsg)
-                    )
-                }
-            } catch(e: Exception) {
+            } else  {
+                val errorMsg = if(response.code() == 401) "Invalid Password" else if(response.code() == 404) "Given User does not exist" else "Unknown Error"
+                Log.i("LoginViewModel", "In error")
                 _uiState.value = _uiState.value.copy(
-                    loginState = AuthorizationState.Error(e.message ?: "Unknown Error exception")
+                    loginState = AuthorizationState.Error(errorMsg)
                 )
             }
+        } catch(e: Exception) {
+            _uiState.value = _uiState.value.copy(
+                loginState = AuthorizationState.Error(e.message ?: "Unknown Error exception")
+            )
         }
 
     }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Remove
@@ -68,7 +69,8 @@ fun BuyerBottomBar(navController: NavController) {
             NavigationItem("Home", Icons.Default.Home, "buyer_home"),
             NavigationItem("Chats", Icons.Filled.Chat, "chat_listing"),
             NavigationItem("Profile", Icons.Default.Person, "profile"),
-            NavigationItem("Cart", Icons.Default.ShoppingCart, "cart")
+            NavigationItem("Cart", Icons.Default.ShoppingCart, "cart"),
+            NavigationItem("Orders", Icons.Default.History, "order")
         )
 
         navItems.forEach { item ->
@@ -241,7 +243,7 @@ fun BuyerInterfaceScreen(
         // Product List
         LazyColumn {
             items(filteredProducts) { product ->
-                ProductCard(product = product, viewModel::addToCart)
+                ProductCard(product = product, viewModel::addToCart, viewModel::addChat)
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -249,11 +251,12 @@ fun BuyerInterfaceScreen(
 }
 
 @Composable
-fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int) -> Unit) {
-    val now = System.currentTimeMillis()
-    val isNew = true // New if within 7 days
-
-    var counter by remember {mutableStateOf(0)}
+fun ProductCard(
+    product: ProductWithCounter,
+    addToCart: (ProductWithCounter, Int) -> Unit,
+    sendChat: (Int) -> Unit
+) {
+    var counter by remember { mutableStateOf(0) }
 
     Card(
         modifier = Modifier
@@ -271,7 +274,7 @@ fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int
         ) {
             // Product Image
             val checkProductLength = product.pr.image?.length ?: 0
-            if(checkProductLength > 10) {
+            if (checkProductLength > 10) {
                 Image(
                     painter = rememberAsyncImagePainter(model = product.pr.image),
                     contentDescription = "Product Image",
@@ -281,6 +284,7 @@ fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int
                     contentScale = ContentScale.Crop
                 )
             }
+
             // Product Details
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
@@ -292,84 +296,92 @@ fun ProductCard(product: ProductWithCounter, addToCart: (ProductWithCounter, Int
                 ) {
                     Text(
                         text = product.pr.name,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                    if (isNew) {
-                        Text(
-                            text = "New!",
-                            color = GrassGreen,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
+                    Text(
+                        text = "$${product.pr.price}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = DarkGreen
+                    )
                 }
-                Text(
-                    text = "\$${product.pr.price}",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = GrassGreen)
-                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Available: ${product.pr.quantity}",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = DarkGreen)
+                    fontSize = 14.sp,
+                    color = Color.Gray
                 )
-//                Text(
-//                    text = product.location,
-//                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
-//                )
-                // Quantity Counter
+            }
 
-                Spacer(modifier = Modifier.weight(1f))
+            // Column for buttons: Counter, Add to Cart, Add Chat
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                // Counter Adjustment (Plus and Minus Buttons)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
                     IconButton(
                         onClick = {
-                            if (counter > 0) {
-                                counter -= 1 // Decrease quantity
-                            }
+                            if (counter > 0) counter -= 1
                         },
-                        enabled = counter > 0
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Remove,
                             contentDescription = "Decrease Quantity",
-                            tint = Color.Gray
+                            tint = DarkGreen
                         )
                     }
+
                     Text(
-                        text = counter.toString(),
-                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp)
+                        text = "$counter",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
+
                     IconButton(
                         onClick = {
-                            if (counter < product.pr.quantity.toInt()) {
-                                counter += 1 // Increase quantity
-                            }
+                            if (counter < product.pr.quantity.toInt()) counter += 1
                         },
-                        enabled = counter < product.pr.quantity.toInt()
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Increase Quantity",
-                            tint = GrassGreen
+                            tint = DarkGreen
                         )
-                    }
-                    Button(
-                        onClick = {
-                            addToCart(product, counter)
-                            counter = 0
-                        },
-                        enabled = counter > 0,
-                        modifier = Modifier.padding(start = 8.dp)
-                    ) {
-                        Text("Add to Cart")
                     }
                 }
 
+                // Add to Cart Button
+                Button(
+                    onClick = { addToCart(product, counter) },
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkGreen)
+                ) {
+                    Text(text = "Add to Cart", color = Color.White, fontSize = 14.sp)
+                }
 
+                // Add Chat Button
+                IconButton(
+                    onClick = { sendChat(product.pr.farmerID) },
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Chat,
+                        contentDescription = "Start Chat",
+                        tint = DarkGreen
+                    )
+                }
             }
         }
     }

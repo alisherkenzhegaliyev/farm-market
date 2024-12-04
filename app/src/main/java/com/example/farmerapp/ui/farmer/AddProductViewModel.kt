@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.farmer
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -38,6 +39,7 @@ class AddProductViewModel(
     }
 
     fun updatePrice(newPrice: String) {
+        Log.i("newprice", newPrice)
         _uiState.value = _uiState.value.copy(price = newPrice)
     }
 
@@ -46,8 +48,10 @@ class AddProductViewModel(
     }
 
     fun addProduct() {
+        Log.i("HEREValue", farmerID)
         _uiState.value = _uiState.value.copy(isLoading = true, savePressed = true)
         viewModelScope.launch {
+            Log.i("addProduct", "${_uiState.value.name} ${_uiState.value.price} ${_uiState.value.quantity} ${farmerID}")
             try {
                 val response = farmerMarketRepository.addProduct(
                     AddUpdateRequest(
@@ -59,6 +63,7 @@ class AddProductViewModel(
                 )
                 if (response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(isSaved = true, isLoading = false)
+                    Log.i("HEREValue", "HEREValue...")
                 } else {
                     _uiState.value = _uiState.value.copy(isSaved = false, isLoading = false)
                 }

@@ -1,21 +1,25 @@
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.farmerapp.model.Cart
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
 import com.example.farmerapp.ui.buyer.BuyerState
-import com.example.farmerapp.ui.buyer.CartItem
 import com.example.farmerapp.ui.buyer.CartScreenViewModel
+import com.example.farmerapp.ui.farmer.ManageState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +28,7 @@ fun CartScreen(
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    val context = LocalContext.current
     val cartItems = uiState.cartItems
     val totalPrice = uiState.totalPrice
 
@@ -52,12 +56,15 @@ fun CartScreen(
                         CircularProgressIndicator()
                     }
                 }
+                if(uiState.state is BuyerState.Success) {
+                    Toast.makeText(context, (uiState.state as BuyerState.Success).message, Toast.LENGTH_SHORT).show()
+                }
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
                     items(cartItems.size) { index ->
-                        CartItemRow(cartItem = cartItems[index])
-                        Divider()
+                        CartItemRow(cartItem = cartItems[index], viewModel::removeItemFromCart)
+                        HorizontalDivider()
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -69,7 +76,7 @@ fun CartScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { /* Navigate to checkout */ },
+                    onClick = viewModel::checkout,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Checkout")
@@ -80,7 +87,7 @@ fun CartScreen(
 }
 
 @Composable
-fun CartItemRow(cartItem: CartItem) {
+fun CartItemRow(cartItem: Cart, deleteItemFromCart: (Cart) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,8 +96,17 @@ fun CartItemRow(cartItem: CartItem) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(text = cartItem.pr.name, fontSize = 16.sp)
-            Text(text = "Price: $${"%.2f".format(cartItem.price)}", fontSize = 14.sp)
+            Text(text = cartItem.productname, fontSize = 16.sp)
+            Text(text = "Price: $${"%.2f".format(cartItem.productprice)}", fontSize = 14.sp)
+            IconButton(onClick = {
+                deleteItemFromCart(cartItem)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = "Remove Item",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
         Text(text = "x${cartItem.quantity}")
     }

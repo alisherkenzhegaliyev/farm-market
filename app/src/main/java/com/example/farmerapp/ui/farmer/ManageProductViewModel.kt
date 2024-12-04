@@ -1,5 +1,6 @@
 package com.example.farmerapp.ui.farmer
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,9 +35,11 @@ class ManageProductViewModel(
 
     private fun getFarmerProducts() {
         viewModelScope.launch {
+            Log.i("getFarmerProducts", farmerID)
             _uiState.value = _uiState.value.copy(manageState = ManageState.Loading)
             farmerMarketRepository.getFarmersProduct(farmerID.toInt()).collect { products ->
                 _uiState.value = _uiState.value.copy(productList = products, manageState = ManageState.Success("Success"))
+                Log.i("getFarmerProducts", products.toString())
             }
         }
     }

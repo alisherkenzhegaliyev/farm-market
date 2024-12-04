@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import kotlinx.coroutines.handleCoroutineException
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -25,6 +27,7 @@ fun LoginScreen(
     onNavigateToBuyerDashboard: () -> Unit,
     viewModel: LoginViewModel = viewModel(factory = FarmerMarketViewModelProvider.Factory)
 ) {
+    val coroutineScope = rememberCoroutineScope()
 
     val uiState = viewModel.uiState.collectAsState()
 
@@ -52,7 +55,9 @@ fun LoginScreen(
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "App Logo",
-                modifier = Modifier.size(80.dp).align(Alignment.Bottom)
+                modifier = Modifier
+                    .size(80.dp)
+                    .align(Alignment.Bottom)
             )
 
             TextButton(
@@ -103,17 +108,10 @@ fun LoginScreen(
         // Login Button
         Button(
             onClick = {
-                viewModel.login()
-                if (uiState.value.loginState is AuthorizationState.Success) {
-                    viewModel.setLoginInitial()
-                    if (uiState.value.chosenRole == Role.Farmer) {
-                        onNavigateToFarmerDashboard()
-                    } else {
-                        onNavigateToBuyerDashboard()
-                    }
-                } else {
-
+                coroutineScope.launch {
+                    viewModel.login()
                 }
+
             }, // Use the navigation callback here
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -142,6 +140,15 @@ fun LoginScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
+                if (uiState.value.loginState is AuthorizationState.Success) {
+                    viewModel.setLoginInitial()
+                    viewModel.setLoginInitial()
+                    if (uiState.value.chosenRole == Role.Farmer) {
+                        onNavigateToFarmerDashboard()
+                    } else {
+                        onNavigateToBuyerDashboard()
+                    }
+                }
             }
             is AuthorizationState.Error -> {
                 Text(

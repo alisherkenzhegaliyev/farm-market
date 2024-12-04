@@ -7,6 +7,7 @@ import com.example.farmerapp.model.Chat
 import com.example.farmerapp.model.Id
 import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.Message
+import com.example.farmerapp.model.Order
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.RegistrationRequest
@@ -70,7 +71,24 @@ interface FarmerMarketRepository {
     suspend fun sendMessage(message: Message): Response<RequestResponse>
 
     suspend fun sendChat(chat: Chat): Response<RequestResponse>
+
+    suspend fun deleteCartItem(cartId: Int): Response<RequestResponse>
+
+    suspend fun addOrder(order: Order): Response<RequestResponse>
+
+    suspend fun getOrders(id: Int, userType: String): List<Order>
+
+    suspend fun deleteOrder(id: Int): Response<RequestResponse>
+
+    suspend fun updateOrder(order: Order): Response<RequestResponse>
+
+
 }
+
+//--------------------------------------------------------------------
+//-------------------REPOSITORY IMPLEMENTATION------------------------
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
 
 class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMarketApiService) : FarmerMarketRepository {
     override suspend fun login(email: String, password: String, role: String): Response<RequestResponse> {
@@ -79,6 +97,26 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
         Log.i("LoginViewModel", "LoginRequest created: $request")
         return farmerMarketApiService.login(request)
 
+    }
+
+    override suspend fun deleteCartItem(cartId: Int): Response<RequestResponse> {
+        return farmerMarketApiService.deleteCartItem(cartId)
+    }
+
+    override suspend fun addOrder(order: Order): Response<RequestResponse> {
+        return farmerMarketApiService.addOrder(order)
+    }
+
+    override suspend fun deleteOrder(id: Int): Response<RequestResponse> {
+        return farmerMarketApiService.deleteOrder(id)
+    }
+
+    override suspend fun updateOrder(order: Order): Response<RequestResponse> {
+        return farmerMarketApiService.updateOrder(order)
+    }
+
+    override suspend fun getOrders(id: Int, userType: String): List<Order> {
+        return farmerMarketApiService.getOrders(id, userType)
     }
 
     override suspend fun registerFarmer(
@@ -196,6 +234,7 @@ class DefaultFarmerMarketRepository(private val farmerMarketApiService: FarmerMa
     override suspend fun getBuyerName(id: Int): RequestResponse {
         return farmerMarketApiService.getBuyerName(id)
     }
+
 
 
 

@@ -39,5 +39,6 @@ class ProfileViewModel(
     }
     fun logOut() {
         sessionManager.clearSession()
+
     }
 }

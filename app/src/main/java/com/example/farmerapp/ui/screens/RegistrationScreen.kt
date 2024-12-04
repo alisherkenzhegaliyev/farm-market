@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.farmerapp.ui.FarmerMarketViewModelProvider
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -19,6 +20,7 @@ fun RegistrationScreen(
     // State to track user type (Farmer or Buyer)
     val uiState = viewModel.uiState.collectAsState()
 
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -197,7 +199,7 @@ fun RegistrationScreen(
         // Register Button
         Button(
             onClick = {
-                viewModel.register()
+                coroutineScope.launch{ viewModel.register() }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -233,6 +235,7 @@ fun RegistrationScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
+                viewModel.setInitialUi()
             }
             is AuthorizationState.Error -> {
                 Text(

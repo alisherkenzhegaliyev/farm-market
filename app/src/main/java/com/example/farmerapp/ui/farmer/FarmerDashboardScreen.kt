@@ -25,6 +25,7 @@ import com.example.farmerapp.ui.buyer.NavigationItem
 fun FarmerDashboardScreen(
     onAddProduct: () -> Unit,
     onManageProducts: () -> Unit,
+    onOrder: () -> Unit,
     navController: NavController // Pass NavController to FarmerDashboardScreen
 ) {
     Scaffold(
@@ -34,6 +35,7 @@ fun FarmerDashboardScreen(
                 modifier = Modifier.padding(padding),
                 onAddProduct = onAddProduct,
                 onManageProducts = onManageProducts,
+                onOrder = onOrder
             )
         },
         bottomBar = { FarmerBottomBar(navController = navController) } // Add BottomNavigationBar here
@@ -112,6 +114,7 @@ fun FarmerDashboardContent(
     modifier: Modifier = Modifier,
     onAddProduct: () -> Unit,
     onManageProducts: () -> Unit,
+    onOrder: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -138,6 +141,13 @@ fun FarmerDashboardContent(
                 icon = Icons.Default.Edit,
                 backgroundColor = Color(0xFF4CAF50),
                 onClick = onManageProducts
+            )
+
+            DashboardCard(
+                text = "Orders",
+                icon = Icons.Default.History,
+                backgroundColor = Color(0xFF4CAF50),
+                onClick = onOrder
             )
         }
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.farmerapp.data.FarmerMarketRepository
 import com.example.farmerapp.data.preferences.SessionManager
 import com.example.farmerapp.model.Cart
+import com.example.farmerapp.model.Chat
 import com.example.farmerapp.model.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,6 +30,29 @@ class BuyerDashboardViewModel(
                 initialValue = ProductListUiState()
             )
 
+    fun addChat(farmerId: Int) {
+        val toAdd = Chat(
+            farmerid = farmerId,
+            buyerid = sessionManager.getUserId().toInt(),
+            status = "active",
+
+        )
+        viewModelScope.launch {
+            try {
+                val response = farmerMarketRepository.sendChat(toAdd)
+                if (response.isSuccessful) {
+                    requestState.value = requestState.value.copy(requestState = BuyerState.Success("Chat added successfully"))
+                    farmerMarketRepository.getFarmersProduct(farmerId)
+                } else {
+                    requestState.value = requestState.value.copy(requestState = BuyerState.Error("Error adding chat"))
+                }
+
+            } catch(e : Exception) {
+                requestState.value = requestState.value.copy(requestState = BuyerState.Error(e.message ?: "Unknown Error"))
+            }
+        }
+    }
+
     fun addToCart(pr: ProductWithCounter, counter : Int) {
         val toAdd = Cart(
             productid = pr.pr.productID,
@@ -36,6 +60,8 @@ class BuyerDashboardViewModel(
             buyerid = sessionManager.getUserId().toInt(),
             farmerid = pr.pr.farmerID,
             status = "active",
+            productname = pr.pr.name,
+            productprice = pr.pr.price
         )
 
         viewModelScope.launch {

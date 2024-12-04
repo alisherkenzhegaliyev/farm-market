@@ -6,6 +6,7 @@ import com.example.farmerapp.model.Chat
 import com.example.farmerapp.model.Id
 import com.example.farmerapp.model.LoginRequest
 import com.example.farmerapp.model.Message
+import com.example.farmerapp.model.Order
 import com.example.farmerapp.model.RequestResponse
 import com.example.farmerapp.model.Product
 import com.example.farmerapp.model.RegistrationRequest
@@ -63,6 +64,25 @@ interface FarmerMarketApiService {
 
     @GET("/api/buyer/name/{id}/")
     suspend fun getBuyerName(@Path("id") id: Int): RequestResponse
+
+    @POST("/api/delete/cart/item/{id}")
+    suspend fun deleteCartItem(@Path("id") id: Int): Response<RequestResponse>
+
+    @POST("/api/add/order/")
+    suspend fun addOrder(@Body order: Order): Response<RequestResponse>
+
+    @GET("/api/order/{buyerid}/{userType}")
+    suspend fun getOrders(@Path("buyerid") buyerId: Int, @Path("userType") userType: String): List<Order>
+
+    @POST("/api/delete/order/{id}")
+    suspend fun deleteOrder(@Path("id") id: Int): Response<RequestResponse>
+
+    @POST("/api/update/order/")
+    suspend fun updateOrder(@Body order: Order): Response<RequestResponse>
+
+
+
+
 
 }
 

@@ -11,6 +11,7 @@ import com.example.farmerapp.ui.buyer.BuyerDashboardViewModel
 import com.example.farmerapp.ui.buyer.CartScreenViewModel
 import com.example.farmerapp.ui.General.ChatViewModel
 import com.example.farmerapp.ui.General.ProfileViewModel
+import com.example.farmerapp.ui.buyer.OrderViewModel
 import com.example.farmerapp.ui.farmer.AddProductViewModel
 import com.example.farmerapp.ui.farmer.EditScreenViewModel
 import com.example.farmerapp.ui.farmer.ManageProductViewModel
@@ -90,6 +91,13 @@ object FarmerMarketViewModelProvider {
 
         initializer {
             ChatListingViewModel(
+                farmerMarketApplication().container.farmerMarketRepository,
+                farmerMarketApplication().sessionManager
+            )
+        }
+
+        initializer {
+            OrderViewModel(
                 farmerMarketApplication().container.farmerMarketRepository,
                 farmerMarketApplication().sessionManager
             )

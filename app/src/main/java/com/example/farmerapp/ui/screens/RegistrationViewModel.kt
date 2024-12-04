@@ -93,52 +93,71 @@ class RegistrationViewModel(
         _uiState.update { it.copy(paymentMethod = paymentMethod) }
     }
 
+    fun setInitialUi() {
+        _uiState.update {
+            it.copy(
+                name = "",
+                email = "",
+                password = "",
+                phoneNumber = "",
+                farmAddress = "",
+                farmSize = "",
+                cropTypes = "",
+                govtId = "",
+                deliveryAddress = "",
+                paymentMethod = "",
+                errorMessage = "",
+                registrationStatus = "",
+                userType = "Buyer",
+                emailValidity = false,
+                registrationState = AuthorizationState.Idle,
+            )
+        }
+    }
     // Registration logic
-    fun register() {
+    suspend fun register() {
         _uiState.update { it.copy(registrationState = AuthorizationState.Loading) }
 
-        viewModelScope.launch {
-            try {
-                val response: Response<RequestResponse>
-                if(uiState.value.userType == "Farmer") {
-                    response = farmerMarketRepository.registerFarmer(
-                        name = uiState.value.name,
-                        email = uiState.value.email,
-                        password = uiState.value.password,
-                        phone = uiState.value.phoneNumber,
-                        farmAddress = uiState.value.farmAddress,
-                        farmSize = uiState.value.farmSize,
-                        govtId = uiState.value.govtId,
-                        cropTypes = uiState.value.cropTypes
-                    )
-                } else {
-                    response = farmerMarketRepository.registerBuyer(
-                        name = uiState.value.name,
-                        email = uiState.value.email,
-                        password = uiState.value.password,
-                        phone = uiState.value.phoneNumber,
-                        address = uiState.value.deliveryAddress,
-                        ppm = uiState.value.paymentMethod
-                    )
-                }
-
-                if (response.isSuccessful) {
-                    _uiState.update {
-                        it.copy(registrationState = AuthorizationState.Success(successMsg = response.body()?.message ?: "Successful"))
-                    }
-                } else {
-                    val errorMsg = if(response.code() == 401) "Such user already exists" else "Fields are invalid"
-                    _uiState.update {
-                        it.copy(registrationState = AuthorizationState.Error(errorMsg = errorMsg))
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(registrationState = AuthorizationState.Error(errorMsg = e.message ?: "Unknown Error"))
-                }
+        try {
+            val response: Response<RequestResponse>
+            if(uiState.value.userType == "Farmer") {
+                response = farmerMarketRepository.registerFarmer(
+                    name = uiState.value.name,
+                    email = uiState.value.email,
+                    password = uiState.value.password,
+                    phone = uiState.value.phoneNumber,
+                    farmAddress = uiState.value.farmAddress,
+                    farmSize = uiState.value.farmSize,
+                    govtId = uiState.value.govtId,
+                    cropTypes = uiState.value.cropTypes
+                )
+            } else {
+                response = farmerMarketRepository.registerBuyer(
+                    name = uiState.value.name,
+                    email = uiState.value.email,
+                    password = uiState.value.password,
+                    phone = uiState.value.phoneNumber,
+                    address = uiState.value.deliveryAddress,
+                    ppm = uiState.value.paymentMethod
+                )
             }
 
+            if (response.isSuccessful) {
+                _uiState.update {
+                    it.copy(registrationState = AuthorizationState.Success(successMsg = response.body()?.message ?: "Successful"))
+                }
+            } else {
+                val errorMsg = if(response.code() == 401) "Such user already exists" else "Fields are invalid"
+                _uiState.update {
+                    it.copy(registrationState = AuthorizationState.Error(errorMsg = errorMsg))
+                }
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(registrationState = AuthorizationState.Error(errorMsg = e.message ?: "Unknown Error"))
+            }
         }
+
     }
 
 }

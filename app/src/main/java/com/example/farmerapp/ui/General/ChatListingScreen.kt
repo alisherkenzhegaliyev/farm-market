@@ -85,7 +85,7 @@ fun ChatListScreen(
                     ) {
                         items(uiState.chatList) { chat ->
                             Log.i("ChatListScreen", "Chat: ${chat.chat.chatid}")
-                            ChatItem(chat = chat, onClick = { onChatSelected(chat.chat.chatid) })
+                            ChatItem(chat = chat, onClick = { onChatSelected(chat.chat.chatid!!) })
                         }
                     }
                 }

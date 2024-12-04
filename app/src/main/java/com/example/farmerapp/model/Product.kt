@@ -1,6 +1,21 @@
 package com.example.farmerapp.model
 
+import android.annotation.SuppressLint
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
+import java.util.Date
+
+data class Order(
+    val orderid: Int? = null,
+    val farmerid: Int,
+    val buyerid: Int,
+    @SuppressLint("SimpleDateFormat")
+    val orderdate: String? = SimpleDateFormat("yyyy-MM-dd").format(Date()),
+    val orderstatus: String,
+    val totalamount: Int,
+    val totalprice: Float,
+    val productname: String,
+)
 
 data class Message(
     val chatid: Int?,
@@ -12,14 +27,17 @@ data class Message(
 )
 
 data class Chat(
-    val chatid: Int,
+    val chatid: Int? = null,
     val buyerid: Int,
     val farmerid: Int,
     val status: String
 )
 
 data class Cart(
+    val cartid: Int? = null,
     val productid: Int,
+    val productname: String,
+    val productprice: String,
     val buyerid: Int,
     val quantity: Int,
     val farmerid: Int,
