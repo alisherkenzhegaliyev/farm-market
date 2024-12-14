@@ -66,7 +66,3 @@ The Farmer's Market System is a digital platform designed to connect farmers, bu
 
 ## Conclusion
 This project serves as a testament to collaborative software development, demonstrating how modern technologies can transform agricultural commerce. The experience enriched our technical and teamwork skills, preparing us for future challenges in software development.
-
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
-
